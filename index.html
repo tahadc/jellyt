@@ -78,7 +78,6 @@
         .score-box { background: #ffffff; padding: 10px 5px; border-radius: 16px; box-shadow: 0 6px 0 var(--ui-shadow); border: 3px solid var(--board-border); font-size: 16px; font-weight: 700; color: var(--ui-text); flex: 1; text-align: center; white-space: nowrap; transition: 1.5s ease; display: flex; flex-direction: column; justify-content: center;}
         .score-box span { color: #ff5722; font-size: 18px;}
 
-        /* YARDIM BUTONU */
         .help-btn {
             background: #ffc107; color: white; border: 3px solid var(--board-border);
             border-radius: 16px; box-shadow: 0 6px 0 #b28704; cursor: pointer; font-size: 24px;
@@ -87,7 +86,6 @@
         }
         .help-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b28704; }
 
-        /* MOBİL UYUMLU CANVAS */
         .canvas-container {
             position: relative; width: 100%; max-width: 440px; aspect-ratio: 440 / 640; margin-top: 5px;
         }
@@ -98,7 +96,6 @@
         }
         canvas:active { cursor: grabbing; }
 
-        /* COMBO BADGE */
         .combo-streak-badge {
             position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0);
             background: #ffeb3b; padding: 10px 18px; border-radius: 20px; box-shadow: 0 8px 0 #dcc211;
@@ -108,7 +105,6 @@
         }
         .combo-streak-badge.active { visibility: visible; transform: translate(-50%, -50%) scale(1); }
 
-        /* GAME OVER */
         .game-over-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; z-index: 10; }
         .game-over-overlay.active { opacity: 1; pointer-events: auto; }
         .game-over-panel { background: #ffffff; padding: 25px; border-radius: 20px; border: 4px solid var(--board-border); box-shadow: 0 10px 0 var(--ui-shadow); text-align: center; transform: scale(0.7); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 85%; }
@@ -126,8 +122,8 @@
         <div class="splash-cube cube3"></div>
         <div class="splash-cube cube4"></div>
         <h1 class="cover-title">Jelly T</h1>
-        <p class="cover-subtitle">Gel Block Puzzle Game 🍬</p>
-        <button id="playBtn" class="play-btn">OYNA 2026 🎮</button>
+        <p class="cover-subtitle">Bir Thesap Oyunudur // thesap.vercel.app</p>
+        <button id="playBtn" class="play-btn">OYNA!</button>
     </div>
 
     <div class="game-title">✨ Jelly T ✨</div>
@@ -141,7 +137,6 @@
     </div>
     
     <div class="canvas-container">
-        <!-- Canvas iç çözünürlüğü her zaman 440x640 kalacak -->
         <canvas id="gameCanvas" width="440" height="640"></canvas>
         <div id="comboBadge" class="combo-streak-badge">COMBO x0 🔥</div>
         
@@ -172,8 +167,6 @@
         const BOARD_OFFSET_Y = 20;
         const CELL_SIZE = 46;
         const CELL_GAP = 4;
-
-        // EKLENEN DEĞİŞKEN: Bloğun parmak üzerinde görünmesi için piksel ofseti
         const DRAG_OFFSET_Y = 140;
 
         const THEMES = [
@@ -182,8 +175,7 @@
             { bgGradient: 'radial-gradient(circle, #e8f5e9 0%, #c8e6c9 100%)', boardBorder: '#1b5e20', canvasBg: '#e8f5e9', uiText: '#1b5e20', uiShadow: '#a5d6a7', boardBg: '#c8e6c9', cellBg: '#a5d6a7', poolBg: '#c8e6c9', blocks: { 1: { main: '#e53935', light: '#ef5350', dark: '#b71c1c' }, 2: { main: '#1e88e5', light: '#42a5f5', dark: '#0d47a1' }, 3: { main: '#43a047', light: '#66bb6a', dark: '#1b5e20' }, 4: { main: '#fdd835', light: '#ffee58', dark: '#f57f17' }, 5: { main: '#8e24aa', light: '#ab47bc', dark: '#4a148c' }, 6: { main: '#8d6e63', light: '#bcaaa4', dark: '#4e342e' } } },
             { bgGradient: 'radial-gradient(circle, #311b92 0%, #1a237e 100%)', boardBorder: '#b388ff', canvasBg: '#212121', uiText: '#ffffff', uiShadow: '#512da8', boardBg: '#311b92', cellBg: '#4527a0', poolBg: '#311b92', blocks: { 1: { main: '#ff1744', light: '#ff4081', dark: '#d50000' }, 2: { main: '#00e5ff', light: '#18ffff', dark: '#00b8d4' }, 3: { main: '#76ff03', light: '#b2ff59', dark: '#64dd17' }, 4: { main: '#ffea00', light: '#ffff00', dark: '#ffd600' }, 5: { main: '#d500f9', light: '#e040fb', dark: '#aa00ff' }, 6: { main: '#ff9100', light: '#ffd180', dark: '#ff6d00' } } }
         ];
-        let currentLevel = 0, activeTheme = THEMES[0];
-
+        
         const SHAPE_TEMPLATES = [
             { matrix: [[1]], type: 1 }, { matrix: [[1, 1]], type: 2 }, { matrix: [[1], [1]], type: 2 },
             { matrix: [[1, 1, 1]], type: 3 }, { matrix: [[1], [1], [1]], type: 3 }, { matrix: [[1, 1], [1, 1]], type: 4 }, 
@@ -194,24 +186,43 @@
         ];
 
         let grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
-        let score = 0, comboStreak = 0;
+        let score = 0, comboStreak = 0, highScore = 0;
+        let currentLevel = 0, activeTheme = THEMES[0];
         let lastActionWasClear = false, isGameOver = false;
         let pool = [], particles = [], floatingTexts = [], pulseTime = 0;
         let isDragging = false, dragIdx = -1, dragX = 0, dragY = 0;
         const poolSlots = [{ x: 75, y: 520 }, { x: 220, y: 520 }, { x: 365, y: 520 }];
-        let activeHint = null;
+        let activeHint = null, isLoopRunning = false;
 
-        // HATA ÖNLEYİCİ: Bazı tarayıcılar (özellikle önizleme ortamları) localStorage kullanımını engellediği için 
-        // çökmeyi durduran güvenli bir try-catch eklendi.
-        let highScore = 0;
-        try { highScore = parseInt(localStorage.getItem('jellyT_highScore')) || 0; } catch (e) { console.warn('LocalStorage engellendi.'); }
-        highScoreText.innerText = highScore;
+        // --- HAFIZA FONKSİYONLARI ---
+        function saveGameState() {
+            if (isGameOver) return;
+            const gameState = {
+                grid: grid,
+                score: score,
+                poolData: pool.map(shape => ({ matrix: shape.matrix, type: shape.type }))
+            };
+            try { localStorage.setItem('jellyT_saveGame', JSON.stringify(gameState)); } catch(e){}
+        }
+
+        function loadGameState() {
+            try {
+                const saved = localStorage.getItem('jellyT_saveGame');
+                if (!saved) return false;
+                const data = JSON.parse(saved);
+                grid = data.grid;
+                score = data.score;
+                pool = data.poolData.map((pd, idx) => new Shape({ matrix: pd.matrix, type: pd.type }, idx));
+                scoreText.innerText = score;
+                return true;
+            } catch (e) { return false; }
+        }
 
         function updateTheme() {
             let newLevel = Math.floor(score / 1000);
             if (newLevel > THEMES.length - 1) newLevel = THEMES.length - 1;
             if (newLevel > currentLevel || (currentLevel === 0 && score === 0)) {
-                if (newLevel > currentLevel) {
+                if (newLevel > currentLevel && currentLevel !== -1) {
                     for (let i = 0; i < 60; i++) particles.push(new Particle(canvas.width/2, canvas.height/2, activeTheme.blocks[Math.floor(Math.random()*6)+1], true));
                     floatingTexts.push(new FloatingText("✨ BRAVOOO! ✨", canvas.width/2, canvas.height/2, true));
                 }
@@ -239,12 +250,7 @@
             ctx.save();
             let alpha = Math.abs(Math.sin(pulseTime * 3)) * 0.5 + 0.2;
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.roundRect(x, y, size, size, 8);
-            ctx.fill();
-            ctx.stroke();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(x, y, size, size, 8); ctx.fill(); ctx.stroke();
             ctx.restore();
         }
 
@@ -273,20 +279,12 @@
                 ctx.save();
                 this.animScale += ((isBeingDragged ? 1.0 : this.scaleInPool) - this.animScale) * 0.25;
                 let bounceY = (!isBeingDragged && !isGameOver) ? Math.sin(pulseTime + this.slotIdx) * 4 : 0;
-                
-                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) {
-                    bounceY -= 10;
-                }
-
+                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) bounceY -= 10;
                 let shapeW = this.cols * CELL_SIZE + (this.cols - 1) * CELL_GAP;
                 let shapeH = this.rows * CELL_SIZE + (this.rows - 1) * CELL_GAP;
                 let startX = customX !== null ? customX - (shapeW * this.animScale) / 2 : poolSlots[this.slotIdx].x - (shapeW * this.animScale) / 2;
                 let startY = customY !== null ? customY - (shapeH * this.animScale) / 2 : poolSlots[this.slotIdx].y - (shapeH * this.animScale) / 2 + bounceY;
-
-                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) {
-                    ctx.shadowColor = '#fff'; ctx.shadowBlur = 15;
-                }
-
+                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 15; }
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         if (this.matrix[r][c] === 1) {
@@ -304,23 +302,41 @@
             }
         }
 
-        let isLoopRunning = false;
-
         function init() {
-            grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
-            score = 0; currentLevel = -1; updateTheme(); activeHint = null;
-            comboStreak = 0; lastActionWasClear = false; isGameOver = false; particles = []; floatingTexts = [];
-            scoreText.innerText = score; highScoreText.innerText = highScore; comboBadge.classList.remove('active'); gameOverOverlay.classList.remove('active');
-            fillPool();
+            try { highScore = parseInt(localStorage.getItem('jellyT_highScore')) || 0; } catch (e) {}
             
-            // Birden fazla döngü (oyun motoru) çalışmasını engelliyoruz
+            const hasSave = loadGameState();
+            if(!hasSave) {
+                grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
+                score = 0;
+                scoreText.innerText = score;
+                fillPool();
+            }
+
+            currentLevel = -1; 
+            updateTheme(); 
+            activeHint = null;
+            comboStreak = 0; 
+            lastActionWasClear = false; 
+            isGameOver = false; 
+            particles = []; 
+            floatingTexts = [];
+            highScoreText.innerText = highScore; 
+            comboBadge.classList.remove('active'); 
+            gameOverOverlay.classList.remove('active');
+
             if (!isLoopRunning) {
                 isLoopRunning = true;
                 requestAnimationFrame(gameLoop);
             }
         }
 
-        function fillPool() { pool = []; for(let i=0;i<3;i++) pool.push(new Shape(SHAPE_TEMPLATES[Math.floor(Math.random()*SHAPE_TEMPLATES.length)], i)); checkGameOver(); }
+        function fillPool() { 
+            pool = []; 
+            for(let i=0;i<3;i++) pool.push(new Shape(SHAPE_TEMPLATES[Math.floor(Math.random()*SHAPE_TEMPLATES.length)], i)); 
+            saveGameState();
+            checkGameOver(); 
+        }
 
         function gameLoop() {
             if (!isGameOver) {
@@ -378,10 +394,8 @@
 
             ctx.fillStyle = activeTheme.poolBg; ctx.beginPath(); ctx.roundRect(15, 440, canvas.width - 30, 140, 24); ctx.fill();
             ctx.strokeStyle = activeTheme.boardBorder; ctx.lineWidth = 3; ctx.stroke();
-
             pool.forEach((shape, idx) => { if (idx !== dragIdx) shape.draw(ctx); });
             if (activeShape) pool[dragIdx].draw(ctx, dragX, dragY, true);
-
             particles.forEach(p => p.draw(ctx)); floatingTexts.forEach(t => t.draw(ctx));
         }
 
@@ -414,7 +428,6 @@
             let score = 0;
             let clears = getPotentialClears(shape, row, col);
             score += (clears.rows.length + clears.cols.length) * 1000;
-            
             for (let r = 0; r < shape.rows; r++) {
                 for (let c = 0; c < shape.cols; c++) {
                     if (shape.matrix[r][c] === 1) {
@@ -431,10 +444,7 @@
             return score;
         }
 
-        helpBtn.addEventListener('click', () => {
-            if (isGameOver || pool.length === 0) return;
-            activeHint = findBestMove();
-        });
+        helpBtn.addEventListener('click', () => { if (!isGameOver && pool.length > 0) activeHint = findBestMove(); });
 
         function getMousePos(e) {
             let rect = canvas.getBoundingClientRect();
@@ -443,28 +453,16 @@
             return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
         }
 
-        // DEĞİŞTİRİLEN KISIM: Bloklar artık parmağın 80 piksel üzerinde görünür!
         function startDragHandler(e) {
             if (isGameOver) return;
             activeHint = null; 
             let pos = getMousePos(e);
             for (let i = 0; i < pool.length; i++) {
-                if (pool[i].contains(pos.x, pos.y)) { 
-                    isDragging = true; 
-                    dragIdx = i; 
-                    dragX = pos.x; 
-                    dragY = pos.y - DRAG_OFFSET_Y; // Bloğu parmağın üstüne kaldır
-                    break; 
-                }
+                if (pool[i].contains(pos.x, pos.y)) { isDragging = true; dragIdx = i; dragX = pos.x; dragY = pos.y - DRAG_OFFSET_Y; break; }
             }
         }
         
-        function moveDragHandler(e) { 
-            if (!isDragging || dragIdx === -1 || isGameOver) return; 
-            let pos = getMousePos(e); 
-            dragX = pos.x; 
-            dragY = pos.y - DRAG_OFFSET_Y; // Sürüklerken yukarıda kalmasını sağla
-        }
+        function moveDragHandler(e) { if (isDragging && dragIdx !== -1 && !isGameOver) { let pos = getMousePos(e); dragX = pos.x; dragY = pos.y - DRAG_OFFSET_Y; } }
         
         function endDragHandler(e) {
             if (!isDragging || dragIdx === -1 || isGameOver) return;
@@ -472,7 +470,7 @@
             if (gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) {
                 placeShape(activeShape, gridTarget.row, gridTarget.col);
                 pool.splice(dragIdx, 1); pool.forEach((s, index) => s.slotIdx = index); checkLines(); 
-                if (pool.length === 0) fillPool(); else checkGameOver();
+                if (pool.length === 0) fillPool(); else { saveGameState(); checkGameOver(); }
             }
             isDragging = false; dragIdx = -1;
         }
@@ -490,25 +488,31 @@
 
         function checkGameOver() {
             if (pool.length === 0) return;
-            for (let shape of pool) for (let r = 0; r <= GRID_SIZE - shape.rows; r++) for (let c = 0; c <= GRID_SIZE - shape.cols; c++) if (canPlace(shape.matrix, r, c)) return;
-            isGameOver = true; isDragging = false; dragIdx = -1;
-            
-            try {
-                if (score > highScore) { 
-                    highScore = score; 
-                    localStorage.setItem('jellyT_highScore', highScore); 
-                    highScoreText.innerText = highScore; 
+            let possible = false;
+            for (let shape of pool) {
+                for (let r = 0; r <= GRID_SIZE - shape.rows; r++) {
+                    for (let c = 0; c <= GRID_SIZE - shape.cols; c++) {
+                        if (canPlace(shape.matrix, r, c)) { possible = true; break; }
+                    }
+                    if(possible) break;
                 }
-            } catch (e) {}
-
-            document.getElementById('finalScore').innerText = score; document.getElementById('finalHighScore').innerText = highScore;
-            gameOverOverlay.classList.add('active');
+                if(possible) break;
+            }
+            
+            if(!possible) {
+                isGameOver = true;
+                localStorage.removeItem('jellyT_saveGame');
+                try { if (score > highScore) { highScore = score; localStorage.setItem('jellyT_highScore', highScore); highScoreText.innerText = highScore; } } catch (e) {}
+                document.getElementById('finalScore').innerText = score; document.getElementById('finalHighScore').innerText = highScore;
+                gameOverOverlay.classList.add('active');
+            }
         }
 
         function placeShape(shape, row, col) {
             let blocksPlaced = 0;
             for (let r=0; r<shape.rows; r++) for (let c=0; c<shape.cols; c++) if (shape.matrix[r][c] === 1) { grid[row+r][col+c] = shape.type; blocksPlaced++; }
             score += blocksPlaced * 10; scoreText.innerText = score; updateTheme();
+            saveGameState();
         }
 
         function checkLines() {
@@ -525,6 +529,7 @@
                 if (comboStreak >= 3) floatingTexts.push(new FloatingText("İNANILMAZ! 🚀", canvas.width / 2, canvas.height / 3, true));
                 else if (comboStreak === 2) floatingTexts.push(new FloatingText("HARİKA! Combo x2", canvas.width / 2, canvas.height / 3, false));
                 else floatingTexts.push(new FloatingText(`+${clearPoints}`, canvas.width / 2, canvas.height / 3, false));
+                saveGameState();
             } else { lastActionWasClear = false; comboStreak = 0; comboBadge.classList.remove('active'); }
         }
 
@@ -533,12 +538,15 @@
         }
 
         canvas.addEventListener('mousedown', startDragHandler); window.addEventListener('mousemove', moveDragHandler); window.addEventListener('mouseup', endDragHandler);
-        
         canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDragHandler(e); }, { passive: false });
         window.addEventListener('touchmove', (e) => { if(isDragging) e.preventDefault(); moveDragHandler(e); }, { passive: false });
         window.addEventListener('touchend', endDragHandler);
 
-        restartBtn.addEventListener('click', init);
+        restartBtn.addEventListener('click', () => {
+            localStorage.removeItem('jellyT_saveGame');
+            init();
+        });
+        
         playBtn.addEventListener('click', () => { splashScreen.classList.add('hide'); init(); });
     </script>
 </body>
