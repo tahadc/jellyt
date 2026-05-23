@@ -4,57 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Jelly T">
-    <title>Jelly T</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Jelly T">
+    <title>Jelly T - Mobil & Yapay Zeka</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap');
 
+        /* CSS DEĞİŞKENLERİ */
+        :root {
+            --bg-gradient: radial-gradient(circle, #fdf6ec 0%, #f4e3cf 100%);
+            --board-border: #6b4f35;
+            --canvas-bg: #fffaf2;
+            --ui-text: #795548;
+            --ui-shadow: #e6c8a7;
+        }
+
         body {
-            background: radial-gradient(circle, #fdf6ec 0%, #f4e3cf 100%);
-            color: #4a3728;
+            background: var(--bg-gradient);
+            color: var(--ui-text);
             font-family: 'Fredoka', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
             margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
             user-select: none;
-            touch-action: none;
-            position: relative;
+            touch-action: none; /* Mobilde kaymayı engeller */
             overflow: hidden;
+            transition: background 1.5s ease, color 1.5s ease;
         }
 
-        /* --- GİRİŞ / KAPAK EKRANI (SPLASH SCREEN) --- */
+        /* KAPAK EKRANI */
         .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, #9c88ff 0%, #3f3175 100%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
         }
+        .splash-screen.hide { transform: translateY(-100%); }
 
-        .splash-screen.hide {
-            transform: translateY(-100%);
-        }
-
-        /* Kapaktaki Dekoratif Jel Küpler */
         .splash-cube {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            opacity: 0.7;
-            box-shadow: inset -4px -4px 0px rgba(0,0,0,0.2), 0 8px 15px rgba(0,0,0,0.2);
+            position: absolute; width: 12vw; height: 12vw; max-width: 50px; max-height: 50px;
+            border-radius: 12px; opacity: 0.7; box-shadow: inset -4px -4px 0px rgba(0,0,0,0.2), 0 8px 15px rgba(0,0,0,0.2);
             animation: floatCube 4s ease-in-out infinite;
         }
         .cube1 { background: #ff5c5c; top: 15%; left: 15%; animation-delay: 0s; }
@@ -62,263 +57,96 @@
         .cube3 { background: #51cf66; bottom: 25%; left: 20%; animation-delay: 0.5s; }
         .cube4 { background: #fcc419; bottom: 20%; right: 20%; animation-delay: 1.5s; }
 
-        @keyframes floatCube {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(15deg); }
-        }
+        @keyframes floatCube { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(15deg); } }
+        @keyframes jellyBounce { 0%, 100% { transform: scale(1, 1) translateY(0); } 30% { transform: scale(1.15, 0.85) translateY(0); } 40% { transform: scale(0.85, 1.15) translateY(-15px); } 50% { transform: scale(1.05, 0.95) translateY(-15px); } 65% { transform: scale(0.98, 1.02) translateY(0); } }
 
-        .cover-title {
-            font-size: 64px;
-            font-weight: 700;
-            color: #ffffff;
-            text-shadow: 
-                0 4px 0 #2c1a4d,
-                0 8px 0 #2c1a4d,
-                0 12px 0 #2c1a4d,
-                0 16px 20px rgba(0, 0, 0, 0.4),
-                0 0 30px rgba(255, 255, 255, 0.3);
-            margin-bottom: 5px;
-            letter-spacing: 2px;
-            animation: jellyBounce 2s ease-in-out infinite;
-            z-index: 2;
-        }
+        .cover-title { font-size: 14vw; max-font-size: 64px; font-weight: 700; color: #ffffff; text-shadow: 0 4px 0 #2c1a4d, 0 8px 0 #2c1a4d, 0 16px 20px rgba(0, 0, 0, 0.4); margin-bottom: 5px; animation: jellyBounce 2s ease-in-out infinite; z-index: 2; }
+        .cover-subtitle { font-size: 5vw; max-font-size: 20px; color: #f5f4f8; margin-bottom: 40px; z-index: 2; }
+        .play-btn { background: #ff5722; color: white; border: 4px solid #ffffff; padding: 16px 45px; font-size: 26px; font-family: 'Fredoka', sans-serif; font-weight: 700; border-radius: 25px; box-shadow: 0 10px 0 #b33600; cursor: pointer; outline: none; z-index: 2; }
+        .play-btn:active { transform: translateY(6px); box-shadow: 0 4px 0 #b33600; }
 
-        .cover-subtitle {
-            font-size: 20px;
-            color: #f5f4f8;
-            font-weight: 400;
-            margin-bottom: 40px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            letter-spacing: 1px;
-            z-index: 2;
-        }
+        /* OYUN ALANI */
+        .game-title { font-size: 8vw; font-weight: 700; color: #ff5722; text-shadow: 3px 3px 0px var(--board-border); margin: 5px 0 15px 0; text-align: center; }
+        @media (min-width: 500px) { .game-title { font-size: 36px; } }
 
-        @keyframes jellyBounce {
-            0%, 100% { transform: scale(1, 1) translateY(0); }
-            30% { transform: scale(1.15, 0.85) translateY(0); }
-            40% { transform: scale(0.85, 1.15) translateY(-15px); }
-            50% { transform: scale(1.05, 0.95) translateY(-15px); }
-            65% { transform: scale(0.98, 1.02) translateY(0); }
-        }
+        .top-panel { width: 100%; max-width: 440px; display: flex; justify-content: space-between; align-items: stretch; gap: 10px; margin-bottom: 12px; }
+        .scores-wrapper { display: flex; flex: 1; gap: 10px; }
+        .score-box { background: #ffffff; padding: 10px 5px; border-radius: 16px; box-shadow: 0 6px 0 var(--ui-shadow); border: 3px solid var(--board-border); font-size: 16px; font-weight: 700; color: var(--ui-text); flex: 1; text-align: center; white-space: nowrap; transition: 1.5s ease; display: flex; flex-direction: column; justify-content: center;}
+        .score-box span { color: #ff5722; font-size: 18px;}
 
-        .play-btn {
-            background: #ff5722;
-            color: white;
-            border: 4px solid #ffffff;
-            padding: 16px 45px;
-            font-size: 26px;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            border-radius: 25px;
-            box-shadow: 0 10px 0 #b33600, 0 15px 20px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s;
-            outline: none;
-            z-index: 2;
+        /* YARDIM BUTONU */
+        .help-btn {
+            background: #ffc107; color: white; border: 3px solid var(--board-border);
+            border-radius: 16px; box-shadow: 0 6px 0 #b28704; cursor: pointer; font-size: 24px;
+            width: 60px; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.1s, box-shadow 0.1s; outline: none; padding: 0;
         }
+        .help-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b28704; }
 
-        .play-btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 4px 0 #b33600, 0 8px 10px rgba(0,0,0,0.3);
-        }
-
-        /* --- OYUN ALANI TASARIMI --- */
-        .game-title {
-            font-size: 42px;
-            font-weight: 700;
-            color: #ff5722;
-            text-shadow: 3px 3px 0px #6b4f35, 5px 5px 0px rgba(0,0,0,0.1);
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-            animation: floatTitle 3s ease-in-out infinite;
-        }
-
-        @keyframes floatTitle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .ui-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 440px;
-            margin-bottom: 12px;
-            padding: 0 10px;
-            box-sizing: border-box;
-            gap: 10px;
-        }
-
-        .score-box {
-            background: #ffffff;
-            padding: 10px 16px;
-            border-radius: 20px;
-            box-shadow: 0 8px 0 #e6c8a7;
-            border: 3px solid #6b4f35;
-            font-size: 20px;
-            font-weight: 700;
-            color: #795548;
-            flex: 1;
-            text-align: center;
-            white-space: nowrap;
-        }
-        
-        .score-box span {
-            color: #ff5722;
-        }
-
-        .combo-streak-badge {
-            background: #ffeb3b;
-            padding: 10px 14px;
-            border-radius: 20px;
-            box-shadow: 0 8px 0 #dcc211;
-            border: 3px solid #6b4f35;
-            font-size: 18px;
-            font-weight: 700;
-            color: #795548;
-            visibility: hidden;
-            transform: scale(0);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center;
-        }
-
-        .combo-streak-badge.active {
-            visibility: visible;
-            transform: scale(1);
-        }
-
+        /* MOBİL UYUMLU CANVAS (Ekrana sığar, oranını korur) */
         .canvas-container {
-            position: relative;
-            width: 440px;
-            height: 640px;
+            position: relative; width: 100%; max-width: 440px; aspect-ratio: 440 / 640; margin-top: 5px;
         }
-
         canvas {
-            background-color: #fffaf2;
-            border-radius: 24px;
-            border: 4px solid #6b4f35;
-            box-shadow: 0 16px 0 #d9be9e, 0 25px 30px rgba(107, 79, 53, 0.2);
-            cursor: grab;
-            position: absolute;
-            top: 0;
-            left: 0;
+            width: 100%; height: 100%; background-color: var(--canvas-bg); border-radius: 20px;
+            border: 4px solid var(--board-border); box-shadow: 0 10px 0 var(--ui-shadow);
+            cursor: grab; position: absolute; top: 0; left: 0; transition: 1.5s ease;
         }
+        canvas:active { cursor: grabbing; }
 
-        canvas:active {
-            cursor: grabbing;
+        /* COMBO BADGE - Canvas üzerine ortalanmış */
+        .combo-streak-badge {
+            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: #ffeb3b; padding: 10px 18px; border-radius: 20px; box-shadow: 0 8px 0 #dcc211;
+            border: 3px solid var(--board-border); font-size: 22px; font-weight: 700; color: #795548;
+            visibility: hidden; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center; pointer-events: none; z-index: 5;
         }
+        .combo-streak-badge.active { visibility: visible; transform: translate(-50%, -50%) scale(1); }
 
-        .game-over-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(107, 79, 53, 0.7);
-            border-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            z-index: 10;
-        }
-
-        .game-over-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .game-over-panel {
-            background: #ffffff;
-            padding: 30px 40px;
-            border-radius: 24px;
-            border: 4px solid #6b4f35;
-            box-shadow: 0 12px 0 #e6c8a7;
-            text-align: center;
-            transform: scale(0.7);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 70%;
-            box-sizing: border-box;
-        }
-
-        .game-over-overlay.active .game-over-panel {
-            transform: scale(1);
-        }
-
-        .game-over-title {
-            font-size: 36px;
-            color: #ff5722;
-            margin: 0 0 15px 0;
-            font-weight: 700;
-        }
-
-        .game-over-score {
-            font-size: 22px;
-            color: #795548;
-            margin: 8px 0;
-        }
-
-        .game-over-score span {
-            color: #ff5722;
-            font-weight: 700;
-        }
-
-        .restart-btn {
-            background: #51cf66;
-            color: white;
-            border: 3px solid #6b4f35;
-            padding: 12px 28px;
-            font-size: 22px;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            border-radius: 18px;
-            box-shadow: 0 6px 0 #3b9c4d;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.1s, box-shadow 0.1s;
-            outline: none;
-        }
-
-        .restart-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #3b9c4d;
-        }
+        /* GAME OVER */
+        .game-over-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; z-index: 10; }
+        .game-over-overlay.active { opacity: 1; pointer-events: auto; }
+        .game-over-panel { background: #ffffff; padding: 25px; border-radius: 20px; border: 4px solid var(--board-border); box-shadow: 0 10px 0 var(--ui-shadow); text-align: center; transform: scale(0.7); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 85%; }
+        .game-over-overlay.active .game-over-panel { transform: scale(1); }
+        .game-over-title { font-size: 28px; color: #ff5722; margin: 0 0 10px 0; }
+        .restart-btn { background: #51cf66; color: white; border: 3px solid var(--board-border); padding: 10px 20px; font-size: 20px; font-weight: 700; border-radius: 16px; box-shadow: 0 6px 0 #3b9c4d; cursor: pointer; margin-top: 15px; width: 100%; font-family: 'Fredoka', sans-serif;}
+        .restart-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #3b9c4d; }
     </style>
 </head>
 <body>
 
-    <!-- --- GİRİŞ / KAPAK EKRANI --- -->
     <div id="splashScreen" class="splash-screen">
         <div class="splash-cube cube1"></div>
         <div class="splash-cube cube2"></div>
         <div class="splash-cube cube3"></div>
         <div class="splash-cube cube4"></div>
-        
         <h1 class="cover-title">Jelly T</h1>
         <p class="cover-subtitle">Gel Block Puzzle Game 🍬</p>
         <button id="playBtn" class="play-btn">OYNA 2026 🎮</button>
     </div>
 
-    <!-- --- ASIL OYUN ALANI --- -->
     <div class="game-title">✨ Jelly T ✨</div>
 
-    <div class="ui-container">
-        <div class="score-box">SKOR: <span id="scoreText">0</span></div>
-        <div class="score-box">EN YÜKSEK: <span id="highScoreText">0</span></div>
-        <div id="comboBadge" class="combo-streak-badge">COMBO x0 🔥</div>
+    <div class="top-panel">
+        <div class="scores-wrapper">
+            <div class="score-box">SKOR<br><span id="scoreText">0</span></div>
+            <div class="score-box">REKOR<br><span id="highScoreText">0</span></div>
+        </div>
+        <!-- İPUCU / YARDIM BUTONU -->
+        <button id="helpBtn" class="help-btn">💡</button>
     </div>
     
     <div class="canvas-container">
+        <!-- Canvas iç çözünürlüğü her zaman 440x640 kalacak (Oyun matematiği bozulmaz), CSS bunu ekrana sığdıracak -->
         <canvas id="gameCanvas" width="440" height="640"></canvas>
+        <div id="comboBadge" class="combo-streak-badge">COMBO x0 🔥</div>
         
         <div id="gameOverOverlay" class="game-over-overlay">
             <div class="game-over-panel">
                 <h2 class="game-over-title">Oyun Bitti! 😭</h2>
-                <div class="game-over-score">Yaptığın Skor: <span id="finalScore">0</span></div>
-                <div class="game-over-score">En Yüksek Skor: <span id="finalHighScore">0</span></div>
+                <div style="font-size:18px; color:#795548; margin-bottom: 5px;">Skor: <span id="finalScore" style="color:#ff5722; font-weight:bold;">0</span></div>
+                <div style="font-size:18px; color:#795548;">Rekor: <span id="finalHighScore" style="color:#ff5722; font-weight:bold;">0</span></div>
                 <button id="restartBtn" class="restart-btn">Tekrar Oyna 🔄</button>
             </div>
         </div>
@@ -330,637 +158,358 @@
         const scoreText = document.getElementById('scoreText');
         const highScoreText = document.getElementById('highScoreText');
         const comboBadge = document.getElementById('comboBadge');
-        
+        const helpBtn = document.getElementById('helpBtn');
         const gameOverOverlay = document.getElementById('gameOverOverlay');
-        const finalScore = document.getElementById('finalScore');
-        const finalHighScore = document.getElementById('finalHighScore');
         const restartBtn = document.getElementById('restartBtn');
-        
         const splashScreen = document.getElementById('splashScreen');
         const playBtn = document.getElementById('playBtn');
 
-        // --- AYARLAR ---
         const GRID_SIZE = 8;
         const BOARD_OFFSET_X = 20;
         const BOARD_OFFSET_Y = 20;
         const CELL_SIZE = 46;
         const CELL_GAP = 4;
 
-        const COLORS = {
-            bg: '#fceddb',
-            cellBg: '#eedbc5',
-            previewOutline: 'rgba(107, 79, 53, 0.3)',
-            1: { main: '#ff5c5c', light: '#ff8e8e', dark: '#d63031' }, 
-            2: { main: '#339af0', light: '#74c0fc', dark: '#1c7ed6' }, 
-            3: { main: '#51cf66', light: '#8ce99a', dark: '#37b24d' }, 
-            4: { main: '#fcc419', light: '#ffe066', dark: '#f59f00' }, 
-            5: { main: '#b197fc', light: '#e5dbff', dark: '#845ef7' }, 
-            6: { main: '#ff922b', light: '#ffc078', dark: '#f76707' }  
-        };
+        // TEMA SİSTEMİ
+        const THEMES = [
+            { bgGradient: 'radial-gradient(circle, #fdf6ec 0%, #f4e3cf 100%)', boardBorder: '#6b4f35', canvasBg: '#fffaf2', uiText: '#795548', uiShadow: '#e6c8a7', boardBg: '#fceddb', cellBg: '#eedbc5', poolBg: '#fbe9d5', blocks: { 1: { main: '#ff5c5c', light: '#ff8e8e', dark: '#d63031' }, 2: { main: '#339af0', light: '#74c0fc', dark: '#1c7ed6' }, 3: { main: '#51cf66', light: '#8ce99a', dark: '#37b24d' }, 4: { main: '#fcc419', light: '#ffe066', dark: '#f59f00' }, 5: { main: '#b197fc', light: '#e5dbff', dark: '#845ef7' }, 6: { main: '#ff922b', light: '#ffc078', dark: '#f76707' } } },
+            { bgGradient: 'radial-gradient(circle, #e0f7fa 0%, #b2ebf2 100%)', boardBorder: '#006064', canvasBg: '#e0f7fa', uiText: '#004d40', uiShadow: '#80deea', boardBg: '#b2ebf2', cellBg: '#80deea', poolBg: '#b2ebf2', blocks: { 1: { main: '#00bcd4', light: '#4dd0e1', dark: '#00838f' }, 2: { main: '#ff4081', light: '#ff80ab', dark: '#c51162' }, 3: { main: '#00e676', light: '#69f0ae', dark: '#00c853' }, 4: { main: '#ffea00', light: '#ffff00', dark: '#ffd600' }, 5: { main: '#d500f9', light: '#e040fb', dark: '#aa00ff' }, 6: { main: '#ff9100', light: '#ffd180', dark: '#ff6d00' } } },
+            { bgGradient: 'radial-gradient(circle, #e8f5e9 0%, #c8e6c9 100%)', boardBorder: '#1b5e20', canvasBg: '#e8f5e9', uiText: '#1b5e20', uiShadow: '#a5d6a7', boardBg: '#c8e6c9', cellBg: '#a5d6a7', poolBg: '#c8e6c9', blocks: { 1: { main: '#e53935', light: '#ef5350', dark: '#b71c1c' }, 2: { main: '#1e88e5', light: '#42a5f5', dark: '#0d47a1' }, 3: { main: '#43a047', light: '#66bb6a', dark: '#1b5e20' }, 4: { main: '#fdd835', light: '#ffee58', dark: '#f57f17' }, 5: { main: '#8e24aa', light: '#ab47bc', dark: '#4a148c' }, 6: { main: '#8d6e63', light: '#bcaaa4', dark: '#4e342e' } } },
+            { bgGradient: 'radial-gradient(circle, #311b92 0%, #1a237e 100%)', boardBorder: '#b388ff', canvasBg: '#212121', uiText: '#ffffff', uiShadow: '#512da8', boardBg: '#311b92', cellBg: '#4527a0', poolBg: '#311b92', blocks: { 1: { main: '#ff1744', light: '#ff4081', dark: '#d50000' }, 2: { main: '#00e5ff', light: '#18ffff', dark: '#00b8d4' }, 3: { main: '#76ff03', light: '#b2ff59', dark: '#64dd17' }, 4: { main: '#ffea00', light: '#ffff00', dark: '#ffd600' }, 5: { main: '#d500f9', light: '#e040fb', dark: '#aa00ff' }, 6: { main: '#ff9100', light: '#ffd180', dark: '#ff6d00' } } }
+        ];
+        let currentLevel = 0, activeTheme = THEMES[0];
 
         const SHAPE_TEMPLATES = [
-            { matrix: [[1]], type: 1 },
-            { matrix: [[1, 1]], type: 2 },
-            { matrix: [[1], [1]], type: 2 },
-            { matrix: [[1, 1, 1]], type: 3 },
-            { matrix: [[1], [1], [1]], type: 3 },
-            { matrix: [[1, 1], [1, 1]], type: 4 },
-            { matrix: [[1, 1, 1], [1, 1, 1], [1, 1, 1]], type: 1 }, 
-            { matrix: [[1, 1], [1, 1], [1, 1]], type: 5 }, 
-            { matrix: [[1, 1, 1], [1, 1, 1]], type: 5 },    
-            { matrix: [[1, 0], [1, 1]], type: 6 },
-            { matrix: [[0, 1], [1, 1]], type: 6 },
-            { matrix: [[1, 1, 1], [0, 1, 0]], type: 4 },
-            { matrix: [[1, 0, 0], [1, 0, 0], [1, 1, 1]], type: 2 }, 
-            { matrix: [[1, 1, 1], [0, 0, 1], [0, 0, 1]], type: 3 }  
+            { matrix: [[1]], type: 1 }, { matrix: [[1, 1]], type: 2 }, { matrix: [[1], [1]], type: 2 },
+            { matrix: [[1, 1, 1]], type: 3 }, { matrix: [[1], [1], [1]], type: 3 }, { matrix: [[1, 1], [1, 1]], type: 4 }, 
+            { matrix: [[1, 1, 1], [1, 1, 1], [1, 1, 1]], type: 1 }, { matrix: [[1, 1], [1, 1], [1, 1]], type: 5 }, 
+            { matrix: [[1, 1, 1], [1, 1, 1]], type: 5 }, { matrix: [[1, 0], [1, 1]], type: 6 }, { matrix: [[0, 1], [1, 1]], type: 6 },
+            { matrix: [[1, 1, 1], [0, 1, 0]], type: 4 }, { matrix: [[1, 0, 0], [1, 0, 0], [1, 1, 1]], type: 2 }, 
+            { matrix: [[1, 1, 1], [0, 0, 1], [0, 0, 1]], type: 3 }
         ];
 
-        // --- DEĞİŞKENLER ---
         let grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
-        let score = 0;
-        let highScore = parseInt(localStorage.getItem('jellyT_highScore')) || 0;
-        let comboStreak = 0; 
-        let lastActionWasClear = false; 
-        let isGameOver = false;
+        let score = 0, highScore = parseInt(localStorage.getItem('jellyT_highScore')) || 0, comboStreak = 0;
+        let lastActionWasClear = false, isGameOver = false;
+        let pool = [], particles = [], floatingTexts = [], pulseTime = 0;
+        let isDragging = false, dragIdx = -1, dragX = 0, dragY = 0;
+        const poolSlots = [{ x: 75, y: 520 }, { x: 220, y: 520 }, { x: 365, y: 520 }];
 
-        let pool = []; 
-        let particles = []; 
-        let floatingTexts = []; 
-        let pulseTime = 0; 
+        // İPUCU SİSTEMİ DEĞİŞKENLERİ
+        let activeHint = null; // { shapeIdx, row, col }
 
-        let isDragging = false;
-        let dragIdx = -1;
-        let dragX = 0;
-        let dragY = 0;
+        function updateTheme() {
+            let newLevel = Math.floor(score / 1000);
+            if (newLevel > THEMES.length - 1) newLevel = THEMES.length - 1;
+            if (newLevel > currentLevel || (currentLevel === 0 && score === 0)) {
+                if (newLevel > currentLevel) {
+                    for (let i = 0; i < 60; i++) particles.push(new Particle(canvas.width/2, canvas.height/2, activeTheme.blocks[Math.floor(Math.random()*6)+1], true));
+                    floatingTexts.push(new FloatingText("✨ BRAVOOO! ✨", canvas.width/2, canvas.height/2, true));
+                }
+                currentLevel = newLevel; activeTheme = THEMES[currentLevel];
+                document.documentElement.style.setProperty('--bg-gradient', activeTheme.bgGradient);
+                document.documentElement.style.setProperty('--board-border', activeTheme.boardBorder);
+                document.documentElement.style.setProperty('--canvas-bg', activeTheme.canvasBg);
+                document.documentElement.style.setProperty('--ui-text', activeTheme.uiText);
+                document.documentElement.style.setProperty('--ui-shadow', activeTheme.uiShadow);
+            }
+        }
 
-        const poolSlots = [
-            { x: 75,  y: 520 },
-            { x: 220, y: 520 },
-            { x: 365, y: 520 }
-        ];
-
-        // --- SEVİMLİ JEL BLOK ÇİZİM FONKSİYONU (3D & PARLAMA) ---
         function drawJellyBlock(ctx, x, y, size, colorObj, scale = 1.0) {
             ctx.save();
-            
-            // Alt Gölge (Jel Hacmi için)
-            ctx.fillStyle = colorObj.dark;
-            ctx.beginPath();
-            ctx.roundRect(x, y + (3 * scale), size, size, 10 * scale);
-            ctx.fill();
-
-            // Ana Gövde Gradyanı
+            ctx.fillStyle = colorObj.dark; ctx.beginPath(); ctx.roundRect(x, y + (3*scale), size, size, 10*scale); ctx.fill();
             let grad = ctx.createLinearGradient(x, y, x, y + size);
-            grad.addColorStop(0, colorObj.light);
-            grad.addColorStop(1, colorObj.main);
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.roundRect(x, y, size, size, 10 * scale);
-            ctx.fill();
-
-            // Jel İç Parlaması
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-            ctx.lineWidth = 2 * scale;
-            ctx.beginPath();
-            ctx.roundRect(x + (2 * scale), y + (2 * scale), size - (4 * scale), size - (4 * scale), 8 * scale);
-            ctx.stroke();
-
-            // Şirin Jöle Parlama Noktası (Sol Üst Köşe)
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-            ctx.beginPath();
-            ctx.arc(x + (8 * scale), y + (8 * scale), 3 * scale, 0, Math.PI * 2);
-            ctx.fill();
-            
+            grad.addColorStop(0, colorObj.light); grad.addColorStop(1, colorObj.main);
+            ctx.fillStyle = grad; ctx.beginPath(); ctx.roundRect(x, y, size, size, 10*scale); ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 2*scale; ctx.beginPath(); ctx.roundRect(x+(2*scale), y+(2*scale), size-(4*scale), size-(4*scale), 8*scale); ctx.stroke();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)'; ctx.beginPath(); ctx.arc(x+(8*scale), y+(8*scale), 3*scale, 0, Math.PI*2); ctx.fill();
             ctx.restore();
         }
 
-        // --- PARÇACIK SİSTEMİ ---
+        // İPUCU İÇİN YANIP SÖNEN BLOK ÇİZİMİ
+        function drawHintBlock(ctx, x, y, size) {
+            ctx.save();
+            let alpha = Math.abs(Math.sin(pulseTime * 3)) * 0.5 + 0.2; // Yanıp sönme efekti
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.roundRect(x, y, size, size, 8);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
+
         class Particle {
-            constructor(x, y, colorObj) {
-                this.x = x;
-                this.y = y;
-                this.vx = (Math.random() - 0.5) * 8;
-                this.vy = (Math.random() - 0.5) * 8 - 2; 
-                this.size = Math.random() * 6 + 4;
-                this.alpha = 1;
-                this.color = colorObj.main;
-                this.gravity = 0.15;
+            constructor(x, y, colorObj, isConfetti=false) {
+                this.x = x; this.y = y; this.vx = (Math.random()-0.5)*(isConfetti?15:8); this.vy = (Math.random()-0.5)*(isConfetti?15:8)-(isConfetti?5:2);
+                this.size = Math.random()*6+4; this.alpha = 1; this.color = colorObj.main; this.gravity = 0.15;
             }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += this.gravity;
-                this.alpha -= 0.02;
-            }
-            draw(ctx) {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
+            update() { this.x += this.vx; this.y += this.vy; this.vy += this.gravity; this.alpha -= 0.015; }
+            draw(ctx) { ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
         }
 
-        // --- FLOATING TEXT ---
         class FloatingText {
-            constructor(text, x, y, isSpecial = false) {
-                this.text = text;
-                this.x = x;
-                this.y = y;
-                this.alpha = 1;
-                this.scale = 0.5;
-                this.isSpecial = isSpecial;
-                this.vy = -3;
-            }
-            update() {
-                this.y += this.vy;
-                this.vy *= 0.92; 
-                if (this.scale < 1.3) this.scale += 0.1;
-                this.alpha -= 0.015;
-            }
-            draw(ctx) {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.translate(this.x, this.y);
-                ctx.scale(this.scale, this.scale);
-                ctx.font = this.isSpecial ? "bold 32px 'Fredoka'" : "bold 22px 'Fredoka'";
-                ctx.textAlign = "center";
-                ctx.fillStyle = "#6b4f35";
-                ctx.fillText(this.text, 2, 2);
-                ctx.fillStyle = this.isSpecial ? "#ffeb3b" : "#ff5722";
-                ctx.fillText(this.text, 0, 0);
-                ctx.restore();
-            }
+            constructor(text, x, y, isSpecial=false) { this.text = text; this.x = x; this.y = y; this.alpha = 1; this.scale = 0.5; this.isSpecial = isSpecial; this.vy = -3; }
+            update() { this.y += this.vy; this.vy *= 0.92; if(this.scale<1.3) this.scale+=0.1; this.alpha-=0.01; }
+            draw(ctx) { ctx.save(); ctx.globalAlpha = this.alpha; ctx.translate(this.x, this.y); ctx.scale(this.scale, this.scale); ctx.font = this.isSpecial ? "bold 36px 'Fredoka'" : "bold 22px 'Fredoka'"; ctx.textAlign = "center"; ctx.fillStyle = activeTheme.boardBorder; ctx.fillText(this.text, 2, 2); ctx.fillStyle = this.isSpecial ? "#ffeb3b" : "#ff5722"; ctx.fillText(this.text, 0, 0); ctx.restore(); }
         }
 
-        // --- ŞEKİL SINIFI ---
         class Shape {
             constructor(template, slotIdx) {
-                this.matrix = template.matrix;
-                this.type = template.type;
-                this.slotIdx = slotIdx;
-                this.isPlaced = false;
-                this.rows = this.matrix.length;
-                this.cols = this.matrix[0].length;
-                
-                this.scaleInPool = (this.cols > 2 || this.rows > 2) ? 0.42 : 0.55;
-                this.animScale = this.scaleInPool; 
+                this.matrix = template.matrix; this.type = template.type; this.slotIdx = slotIdx;
+                this.rows = this.matrix.length; this.cols = this.matrix[0].length;
+                this.scaleInPool = (this.cols > 2 || this.rows > 2) ? 0.42 : 0.55; this.animScale = this.scaleInPool; 
             }
-
             draw(ctx, customX = null, customY = null, isBeingDragged = false) {
-                if (this.isPlaced) return;
-
                 ctx.save();
-                let targetScale = isBeingDragged ? 1.0 : this.scaleInPool;
-                this.animScale += (targetScale - this.animScale) * 0.25;
-
-                let bounceY = 0;
-                if (!isBeingDragged && !isGameOver) {
-                    bounceY = Math.sin(pulseTime + this.slotIdx) * 4;
-                }
+                this.animScale += ((isBeingDragged ? 1.0 : this.scaleInPool) - this.animScale) * 0.25;
+                let bounceY = (!isBeingDragged && !isGameOver) ? Math.sin(pulseTime + this.slotIdx) * 4 : 0;
                 
-                let shapeWidth = this.cols * CELL_SIZE + (this.cols - 1) * CELL_GAP;
-                let shapeHeight = this.rows * CELL_SIZE + (this.rows - 1) * CELL_GAP;
+                // Eğer bu şekil "İpucu" olarak seçilmişse ve sürüklenmiyorsa havuzda parlasın
+                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) {
+                    bounceY -= 10; // Havada kalsın
+                }
 
-                let startX, startY;
-                if (customX !== null && customY !== null) {
-                    startX = customX - (shapeWidth * this.animScale) / 2;
-                    startY = customY - (shapeHeight * this.animScale) / 2;
-                } else {
-                    let slot = poolSlots[this.slotIdx];
-                    startX = slot.x - (shapeWidth * this.animScale) / 2;
-                    startY = slot.y - (shapeHeight * this.animScale) / 2 + bounceY;
+                let shapeW = this.cols * CELL_SIZE + (this.cols - 1) * CELL_GAP;
+                let shapeH = this.rows * CELL_SIZE + (this.rows - 1) * CELL_GAP;
+                let startX = customX !== null ? customX - (shapeW * this.animScale) / 2 : poolSlots[this.slotIdx].x - (shapeW * this.animScale) / 2;
+                let startY = customY !== null ? customY - (shapeH * this.animScale) / 2 : poolSlots[this.slotIdx].y - (shapeH * this.animScale) / 2 + bounceY;
+
+                // İpucu parlama efekti (Arkaplan Glow)
+                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) {
+                    ctx.shadowColor = '#fff'; ctx.shadowBlur = 15;
                 }
 
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         if (this.matrix[r][c] === 1) {
-                            let x = startX + c * (CELL_SIZE + CELL_GAP) * this.animScale;
-                            let y = startY + r * (CELL_SIZE + CELL_GAP) * this.animScale;
-                            let size = CELL_SIZE * this.animScale;
-                            
-                            drawJellyBlock(ctx, x, y, size, COLORS[this.type], this.animScale);
+                            drawJellyBlock(ctx, startX + c * (CELL_SIZE + CELL_GAP) * this.animScale, startY + r * (CELL_SIZE + CELL_GAP) * this.animScale, CELL_SIZE * this.animScale, activeTheme.blocks[this.type], this.animScale);
                         }
                     }
                 }
                 ctx.restore();
             }
-
             contains(mx, my) {
-                if (this.isPlaced) return false;
-                let slot = poolSlots[this.slotIdx];
-                let shapeWidth = this.cols * CELL_SIZE + (this.cols - 1) * CELL_GAP;
-                let shapeHeight = this.rows * CELL_SIZE + (this.rows - 1) * CELL_GAP;
-                
-                let w = shapeWidth * this.scaleInPool;
-                let h = shapeHeight * this.scaleInPool;
-                let x = slot.x - w / 2;
-                let y = slot.y - h / 2;
-
+                let w = (this.cols * CELL_SIZE + (this.cols - 1) * CELL_GAP) * this.scaleInPool;
+                let h = (this.rows * CELL_SIZE + (this.rows - 1) * CELL_GAP) * this.scaleInPool;
+                let x = poolSlots[this.slotIdx].x - w / 2; let y = poolSlots[this.slotIdx].y - h / 2;
                 return mx >= x - 25 && mx <= x + w + 25 && my >= y - 25 && my <= y + h + 25;
             }
         }
 
-        // --- BAŞLATMA ---
         function init() {
             grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
-            score = 0;
-            comboStreak = 0;
-            lastActionWasClear = false;
-            isGameOver = false;
-            particles = [];
-            floatingTexts = [];
-            
-            scoreText.innerText = score;
-            highScoreText.innerText = highScore;
-            comboBadge.classList.remove('active');
-            gameOverOverlay.classList.remove('active');
-            
-            fillPool();
-            requestAnimationFrame(gameLoop);
+            score = 0; currentLevel = -1; updateTheme(); activeHint = null;
+            comboStreak = 0; lastActionWasClear = false; isGameOver = false; particles = []; floatingTexts = [];
+            scoreText.innerText = score; highScoreText.innerText = highScore; comboBadge.classList.remove('active'); gameOverOverlay.classList.remove('active');
+            fillPool(); requestAnimationFrame(gameLoop);
         }
 
-        function fillPool() {
-            pool = [];
-            for (let i = 0; i < 3; i++) {
-                let randTemplate = SHAPE_TEMPLATES[Math.floor(Math.random() * SHAPE_TEMPLATES.length)];
-                pool.push(new Shape(randTemplate, i));
-            }
-            checkGameOver();
-        }
+        function fillPool() { pool = []; for(let i=0;i<3;i++) pool.push(new Shape(SHAPE_TEMPLATES[Math.floor(Math.random()*SHAPE_TEMPLATES.length)], i)); checkGameOver(); }
 
         function gameLoop() {
-            update();
-            render();
-            requestAnimationFrame(gameLoop);
+            if (!isGameOver) {
+                pulseTime += 0.05; 
+                for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(); if (particles[i].alpha <= 0) particles.splice(i, 1); }
+                for (let i = floatingTexts.length - 1; i >= 0; i--) { floatingTexts[i].update(); if (floatingTexts[i].alpha <= 0) floatingTexts.splice(i, 1); }
+            }
+            render(); requestAnimationFrame(gameLoop);
         }
 
-        function update() {
-            if (isGameOver) return;
-            pulseTime += 0.05; 
-
-            for (let i = particles.length - 1; i >= 0; i--) {
-                particles[i].update();
-                if (particles[i].alpha <= 0) particles.splice(i, 1);
-            }
-
-            for (let i = floatingTexts.length - 1; i >= 0; i--) {
-                floatingTexts[i].update();
-                if (floatingTexts[i].alpha <= 0) floatingTexts.splice(i, 1);
-            }
-        }
-
-        // --- SÜRÜKLERKEN PATLAYACAK SATIR/SÜTUN HESAPLAMA SİSTEMİ ---
-        function getPotentialClears(activeShape, targetRow, targetCol) {
-            let tempGrid = Array(GRID_SIZE).fill().map((_, r) => [...grid[r]]);
-            
-            for (let r = 0; r < activeShape.rows; r++) {
-                for (let c = 0; c < activeShape.cols; c++) {
-                    if (activeShape.matrix[r][c] === 1) {
-                        tempGrid[targetRow + r][targetCol + c] = activeShape.type;
-                    }
-                }
-            }
-
-            let rowsToClear = [];
-            let colsToClear = [];
-
-            for (let r = 0; r < GRID_SIZE; r++) {
-                if (tempGrid[r].every(cell => cell !== 0)) rowsToClear.push(r);
-            }
-
-            for (let c = 0; c < GRID_SIZE; c++) {
-                let isFull = true;
-                for (let r = 0; r < GRID_SIZE; r++) {
-                    if (tempGrid[r][c] === 0) { isFull = false; break; }
-                }
-                if (isFull) colsToClear.push(c);
-            }
-
-            return { rows: rowsToClear, cols: colsToClear };
-        }
-
-        // --- ÇİZİM MOTORU ---
         function render() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             let boardW = GRID_SIZE * CELL_SIZE + (GRID_SIZE - 1) * CELL_GAP + 20;
-            ctx.fillStyle = COLORS.bg;
-            ctx.beginPath();
-            ctx.roundRect(BOARD_OFFSET_X - 10, BOARD_OFFSET_Y - 10, boardW, boardW, 20);
-            ctx.fill();
-            ctx.strokeStyle = '#6b4f35';
-            ctx.lineWidth = 3;
-            ctx.stroke();
+            ctx.fillStyle = activeTheme.boardBg; ctx.beginPath(); ctx.roundRect(BOARD_OFFSET_X - 10, BOARD_OFFSET_Y - 10, boardW, boardW, 20); ctx.fill();
+            ctx.strokeStyle = activeTheme.boardBorder; ctx.lineWidth = 3; ctx.stroke();
 
             let activeShape = (isDragging && dragIdx !== -1) ? pool[dragIdx] : null;
-            let gridTarget = null;
-            let potentialClears = { rows: [], cols: [] };
+            let gridTarget = activeShape ? getGridIndexUnderMouse(dragX, dragY, activeShape) : null;
+            let potentialClears = (gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) ? getPotentialClears(activeShape, gridTarget.row, gridTarget.col) : { rows: [], cols: [] };
 
-            if (activeShape) {
-                gridTarget = getGridIndexUnderMouse(dragX, dragY, activeShape);
-                if (gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) {
-                    potentialClears = getPotentialClears(activeShape, gridTarget.row, gridTarget.col);
-                }
-            }
-
+            // Hücreleri Çiz
             for (let r = 0; r < GRID_SIZE; r++) {
                 for (let c = 0; c < GRID_SIZE; c++) {
-                    let x = BOARD_OFFSET_X + c * (CELL_SIZE + CELL_GAP);
-                    let y = BOARD_OFFSET_Y + r * (CELL_SIZE + CELL_GAP);
-
-                    ctx.fillStyle = COLORS.cellBg;
-                    ctx.beginPath();
-                    ctx.roundRect(x, y, CELL_SIZE, CELL_SIZE, 8);
-                    ctx.fill();
-
+                    let x = BOARD_OFFSET_X + c * (CELL_SIZE + CELL_GAP); let y = BOARD_OFFSET_Y + r * (CELL_SIZE + CELL_GAP);
+                    ctx.fillStyle = activeTheme.cellBg; ctx.beginPath(); ctx.roundRect(x, y, CELL_SIZE, CELL_SIZE, 8); ctx.fill();
                     if (grid[r][c] !== 0) {
-                        let colorType = grid[r][c];
-                        
-                        if (activeShape && (potentialClears.rows.includes(r) || potentialClears.cols.includes(c))) {
-                            colorType = activeShape.type; 
-                        }
-
-                        drawJellyBlock(ctx, x, y, CELL_SIZE, COLORS[colorType]);
+                        let colorType = activeShape && (potentialClears.rows.includes(r) || potentialClears.cols.includes(c)) ? activeShape.type : grid[r][c];
+                        drawJellyBlock(ctx, x, y, CELL_SIZE, activeTheme.blocks[colorType]);
                     }
                 }
             }
 
+            // İpucu (Hint) Tahta Üzerinde Gösterme
+            if (activeHint && !isDragging) {
+                let hShape = pool[activeHint.shapeIdx];
+                if (hShape) {
+                    for (let r = 0; r < hShape.rows; r++) {
+                        for (let c = 0; c < hShape.cols; c++) {
+                            if (hShape.matrix[r][c] === 1) {
+                                drawHintBlock(ctx, BOARD_OFFSET_X + (activeHint.col + c) * (CELL_SIZE + CELL_GAP), BOARD_OFFSET_Y + (activeHint.row + r) * (CELL_SIZE + CELL_GAP), CELL_SIZE);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Hedef Silüeti (Sürüklerken)
             if (activeShape && gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) {
                 for (let r = 0; r < activeShape.rows; r++) {
                     for (let c = 0; c < activeShape.cols; c++) {
                         if (activeShape.matrix[r][c] === 1) {
-                            let targetR = gridTarget.row + r;
-                            let targetC = gridTarget.col + c;
-                            let x = BOARD_OFFSET_X + targetC * (CELL_SIZE + CELL_GAP);
-                            let y = BOARD_OFFSET_Y + targetR * (CELL_SIZE + CELL_GAP);
-
-                            ctx.save();
-                            ctx.globalAlpha = 0.5; 
-                            drawJellyBlock(ctx, x, y, CELL_SIZE, COLORS[activeShape.type]);
-                            ctx.restore();
+                            ctx.save(); ctx.globalAlpha = 0.5; drawJellyBlock(ctx, BOARD_OFFSET_X + (gridTarget.col + c) * (CELL_SIZE + CELL_GAP), BOARD_OFFSET_Y + (gridTarget.row + r) * (CELL_SIZE + CELL_GAP), CELL_SIZE, activeTheme.blocks[activeShape.type]); ctx.restore();
                         }
                     }
                 }
             }
 
-            ctx.fillStyle = '#fbe9d5';
-            ctx.beginPath();
-            ctx.roundRect(15, 440, canvas.width - 30, 140, 24);
-            ctx.fill();
-            ctx.strokeStyle = '#6b4f35';
-            ctx.lineWidth = 3;
-            ctx.stroke();
+            ctx.fillStyle = activeTheme.poolBg; ctx.beginPath(); ctx.roundRect(15, 440, canvas.width - 30, 140, 24); ctx.fill();
+            ctx.strokeStyle = activeTheme.boardBorder; ctx.lineWidth = 3; ctx.stroke();
 
-            pool.forEach((shape, idx) => {
-                if (idx !== dragIdx) {
-                    shape.draw(ctx);
-                }
-            });
+            pool.forEach((shape, idx) => { if (idx !== dragIdx) shape.draw(ctx); });
+            if (activeShape) pool[dragIdx].draw(ctx, dragX, dragY, true);
 
-            if (activeShape) {
-                pool[dragIdx].draw(ctx, dragX, dragY, true);
-            }
-
-            particles.forEach(p => p.draw(ctx));
-            floatingTexts.forEach(t => t.draw(ctx));
+            particles.forEach(p => p.draw(ctx)); floatingTexts.forEach(t => t.draw(ctx));
         }
 
+        function getPotentialClears(shape, targetRow, targetCol) {
+            let tempGrid = Array(GRID_SIZE).fill().map((_, r) => [...grid[r]]);
+            for (let r=0; r<shape.rows; r++) for (let c=0; c<shape.cols; c++) if (shape.matrix[r][c] === 1) tempGrid[targetRow+r][targetCol+c] = shape.type;
+            let rowsToClear = [], colsToClear = [];
+            for (let r=0; r<GRID_SIZE; r++) if (tempGrid[r].every(cell => cell !== 0)) rowsToClear.push(r);
+            for (let c=0; c<GRID_SIZE; c++) if (tempGrid.every(r => r[c] !== 0)) colsToClear.push(c);
+            return { rows: rowsToClear, cols: colsToClear };
+        }
+
+        // ----- YAPAY ZEKA (İPUCU) MOTORU -----
+        function findBestMove() {
+            let bestScore = -1; let bestMove = null;
+            for (let i = 0; i < pool.length; i++) {
+                let shape = pool[i];
+                for (let r = 0; r <= GRID_SIZE - shape.rows; r++) {
+                    for (let c = 0; c <= GRID_SIZE - shape.cols; c++) {
+                        if (canPlace(shape.matrix, r, c)) {
+                            let moveScore = evaluateMove(shape, r, c);
+                            if (moveScore > bestScore) { bestScore = moveScore; bestMove = { shapeIdx: i, row: r, col: c }; }
+                        }
+                    }
+                }
+            }
+            return bestMove;
+        }
+
+        function evaluateMove(shape, row, col) {
+            let score = 0;
+            let clears = getPotentialClears(shape, row, col);
+            score += (clears.rows.length + clears.cols.length) * 1000; // Satır patlatmaya devasa öncelik ver
+            
+            // Eğer patlatmıyorsa, kenarlara veya diğer bloklara yapışık olmasına puan ver (Derli toplu tut)
+            for (let r = 0; r < shape.rows; r++) {
+                for (let c = 0; c < shape.cols; c++) {
+                    if (shape.matrix[r][c] === 1) {
+                        let tr = row + r, tc = col + c;
+                        if (tr === 0 || tr === GRID_SIZE - 1) score += 5; // Duvar teması
+                        if (tc === 0 || tc === GRID_SIZE - 1) score += 5; // Duvar teması
+                        if (tr > 0 && grid[tr-1][tc] !== 0) score += 10; // Başka bloğa temas
+                        if (tr < GRID_SIZE - 1 && grid[tr+1][tc] !== 0) score += 10;
+                        if (tc > 0 && grid[tr][tc-1] !== 0) score += 10;
+                        if (tc < GRID_SIZE - 1 && grid[tr][tc+1] !== 0) score += 10;
+                    }
+                }
+            }
+            return score;
+        }
+
+        helpBtn.addEventListener('click', () => {
+            if (isGameOver || pool.length === 0) return;
+            activeHint = findBestMove(); // En iyi hamleyi hesapla ve ekranda göster
+        });
+
+        // MOBİL UYUMLU FARE & DOKUNMA HESAPLAMASI
         function getMousePos(e) {
             let rect = canvas.getBoundingClientRect();
             let clientX = e.touches ? e.touches[0].clientX : e.clientX;
             let clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return {
-                x: (clientX - rect.left) * (canvas.width / rect.width),
-                y: (clientY - rect.top) * (canvas.height / rect.height)
-            };
+            // CSS boyutu ile Canvas iç çözünürlüğünü oranlayarak hassas hesaplama yapar
+            return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
         }
 
         function startDragHandler(e) {
             if (isGameOver) return;
+            activeHint = null; // Sürükleme başladığında ipucunu kapat
             let pos = getMousePos(e);
             for (let i = 0; i < pool.length; i++) {
-                if (pool[i].contains(pos.x, pos.y)) {
-                    isDragging = true;
-                    dragIdx = i;
-                    dragX = pos.x;
-                    dragY = pos.y;
-                    break;
-                }
+                if (pool[i].contains(pos.x, pos.y)) { isDragging = true; dragIdx = i; dragX = pos.x; dragY = pos.y; break; }
             }
         }
-
-        function moveDragHandler(e) {
-            if (!isDragging || dragIdx === -1 || isGameOver) return;
-            let pos = getMousePos(e);
-            dragX = pos.x;
-            dragY = pos.y;
-        }
-
+        function moveDragHandler(e) { if (!isDragging || dragIdx === -1 || isGameOver) return; let pos = getMousePos(e); dragX = pos.x; dragY = pos.y; }
         function endDragHandler(e) {
             if (!isDragging || dragIdx === -1 || isGameOver) return;
-
-            let activeShape = pool[dragIdx];
-            let gridTarget = getGridIndexUnderMouse(dragX, dragY, activeShape);
-
+            let activeShape = pool[dragIdx]; let gridTarget = getGridIndexUnderMouse(dragX, dragY, activeShape);
             if (gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) {
                 placeShape(activeShape, gridTarget.row, gridTarget.col);
-                pool.splice(dragIdx, 1);
-                
-                pool.forEach((s, index) => s.slotIdx = index);
-
-                checkLines(); 
-
-                if (pool.length === 0) {
-                    fillPool();
-                } else {
-                    checkGameOver();
-                }
+                pool.splice(dragIdx, 1); pool.forEach((s, index) => s.slotIdx = index); checkLines(); 
+                if (pool.length === 0) fillPool(); else checkGameOver();
             }
-            
-            isDragging = false;
-            dragIdx = -1;
+            isDragging = false; dragIdx = -1;
         }
 
         function getGridIndexUnderMouse(mx, my, shape) {
-            let shapeWidth = shape.cols * CELL_SIZE + (shape.cols - 1) * CELL_GAP;
-            let shapeHeight = shape.rows * CELL_SIZE + (shape.rows - 1) * CELL_GAP;
-
-            let startX = mx - shapeWidth / 2;
-            let startY = my - shapeHeight / 2;
-
-            let col = Math.round((startX - BOARD_OFFSET_X) / (CELL_SIZE + CELL_GAP));
-            let row = Math.round((startY - BOARD_OFFSET_Y) / (CELL_SIZE + CELL_GAP));
-
-            if (row >= 0 && row <= GRID_SIZE - shape.rows && col >= 0 && col <= GRID_SIZE - shape.cols) {
-                return { row, col };
-            }
-            return null;
+            let w = shape.cols * CELL_SIZE + (shape.cols - 1) * CELL_GAP; let h = shape.rows * CELL_SIZE + (shape.rows - 1) * CELL_GAP;
+            let col = Math.round((mx - w / 2 - BOARD_OFFSET_X) / (CELL_SIZE + CELL_GAP)); let row = Math.round((my - h / 2 - BOARD_OFFSET_Y) / (CELL_SIZE + CELL_GAP));
+            return (row >= 0 && row <= GRID_SIZE - shape.rows && col >= 0 && col <= GRID_SIZE - shape.cols) ? { row, col } : null;
         }
 
         function canPlace(matrix, row, col) {
-            for (let r = 0; r < matrix.length; r++) {
-                for (let c = 0; c < matrix[r].length; c++) {
-                    if (matrix[r][c] === 1) {
-                        if (grid[row + r][col + c] !== 0) return false;
-                    }
-                }
-            }
+            for (let r=0; r<matrix.length; r++) for (let c=0; c<matrix[r].length; c++) if (matrix[r][c] === 1 && grid[row+r][col+c] !== 0) return false;
             return true;
         }
 
         function checkGameOver() {
             if (pool.length === 0) return;
-            let anyshapeCanFit = false;
-
-            for (let shape of pool) {
-                for (let r = 0; r <= GRID_SIZE - shape.rows; r++) {
-                    for (let c = 0; c <= GRID_SIZE - shape.cols; c++) {
-                        if (canPlace(shape.matrix, r, c)) {
-                            anyshapeCanFit = true;
-                            break;
-                        }
-                    }
-                    if (anyshapeCanFit) break;
-                }
-                if (anyshapeCanFit) break;
-            }
-
-            if (!anyshapeCanFit) {
-                triggerGameOver();
-            }
-        }
-
-        function triggerGameOver() {
-            isGameOver = true;
-            isDragging = false;
-            dragIdx = -1;
-
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('jellyT_highScore', highScore);
-                highScoreText.innerText = highScore;
-            }
-
-            finalScore.innerText = score;
-            finalHighScore.innerText = highScore;
+            for (let shape of pool) for (let r = 0; r <= GRID_SIZE - shape.rows; r++) for (let c = 0; c <= GRID_SIZE - shape.cols; c++) if (canPlace(shape.matrix, r, c)) return;
+            isGameOver = true; isDragging = false; dragIdx = -1;
+            if (score > highScore) { highScore = score; localStorage.setItem('jellyT_highScore', highScore); highScoreText.innerText = highScore; }
+            document.getElementById('finalScore').innerText = score; document.getElementById('finalHighScore').innerText = highScore;
             gameOverOverlay.classList.add('active');
         }
 
         function placeShape(shape, row, col) {
             let blocksPlaced = 0;
-            for (let r = 0; r < shape.rows; r++) {
-                for (let c = 0; c < shape.cols; c++) {
-                    if (shape.matrix[r][c] === 1) {
-                        grid[row + r][col + c] = shape.type;
-                        blocksPlaced++;
-                    }
-                }
-            }
-            score += blocksPlaced * 10;
-            scoreText.innerText = score;
+            for (let r=0; r<shape.rows; r++) for (let c=0; c<shape.cols; c++) if (shape.matrix[r][c] === 1) { grid[row+r][col+c] = shape.type; blocksPlaced++; }
+            score += blocksPlaced * 10; scoreText.innerText = score; updateTheme();
         }
 
         function checkLines() {
-            let rowsToClear = [];
-            let colsToClear = [];
-
-            for (let r = 0; r < GRID_SIZE; r++) {
-                if (grid[r].every(cell => cell !== 0)) rowsToClear.push(r);
-            }
-
-            for (let c = 0; c < GRID_SIZE; c++) {
-                let isColFull = true;
-                for (let r = 0; r < GRID_SIZE; r++) {
-                    if (grid[r][c] === 0) { isColFull = false; break; }
-                }
-                if (isColFull) colsToClear.push(c);
-            }
-
+            let rowsToClear = [], colsToClear = [];
+            for (let r=0; r<GRID_SIZE; r++) if (grid[r].every(cell => cell !== 0)) rowsToClear.push(r);
+            for (let c=0; c<GRID_SIZE; c++) if (grid.every(r => r[c] !== 0)) colsToClear.push(c);
             let totalCleared = rowsToClear.length + colsToClear.length;
-
             if (totalCleared > 0) {
-                if (lastActionWasClear) {
-                    comboStreak++;
-                } else {
-                    comboStreak = 1; 
-                }
-                lastActionWasClear = true;
-
-                if (comboStreak > 1) {
-                    comboBadge.innerText = `COMBO x${comboStreak} 🔥`;
-                    comboBadge.classList.add('active');
-                }
-
-                let centerTargetX = canvas.width / 2;
-                let centerTargetY = canvas.height / 3;
-
-                rowsToClear.forEach(r => {
-                    for (let c = 0; c < GRID_SIZE; c++) {
-                        if (grid[r][c] !== 0) {
-                            createExplosion(r, c, grid[r][c]);
-                            grid[r][c] = 0;
-                        }
-                    }
-                });
-
-                colsToClear.forEach(c => {
-                    for (let r = 0; r < GRID_SIZE; r++) {
-                        if (grid[r][c] !== 0) {
-                            createExplosion(r, c, grid[r][c]);
-                            grid[r][c] = 0;
-                        }
-                    }
-                });
-
-                let comboMultiplier = comboStreak >= 2 ? comboStreak : 1;
-                let clearPoints = totalCleared * 100 * comboMultiplier;
-                score += clearPoints;
-                scoreText.innerText = score;
-
-                if (comboStreak >= 3) {
-                    floatingTexts.push(new FloatingText("İNANILMAZ! 🚀", centerTargetX, centerTargetY, true));
-                } else if (comboStreak === 2) {
-                    floatingTexts.push(new FloatingText("HARİKA! Combo x2", centerTargetX, centerTargetY, false));
-                } else {
-                    floatingTexts.push(new FloatingText(`+${clearPoints}`, centerTargetX, centerTargetY, false));
-                }
-
-            } else {
-                lastActionWasClear = false;
-                comboStreak = 0;
-                comboBadge.classList.remove('active');
-            }
+                comboStreak = lastActionWasClear ? comboStreak + 1 : 1; lastActionWasClear = true;
+                if (comboStreak > 1) { comboBadge.innerText = `COMBO x${comboStreak} 🔥`; comboBadge.classList.add('active'); }
+                rowsToClear.forEach(r => { for (let c = 0; c < GRID_SIZE; c++) { if (grid[r][c] !== 0) { createExplosion(r, c, grid[r][c]); grid[r][c] = 0; } } });
+                colsToClear.forEach(c => { for (let r = 0; r < GRID_SIZE; r++) { if (grid[r][c] !== 0) { createExplosion(r, c, grid[r][c]); grid[r][c] = 0; } } });
+                let clearPoints = totalCleared * 100 * (comboStreak >= 2 ? comboStreak : 1); score += clearPoints; scoreText.innerText = score; updateTheme();
+                if (comboStreak >= 3) floatingTexts.push(new FloatingText("İNANILMAZ! 🚀", canvas.width / 2, canvas.height / 3, true));
+                else if (comboStreak === 2) floatingTexts.push(new FloatingText("HARİKA! Combo x2", canvas.width / 2, canvas.height / 3, false));
+                else floatingTexts.push(new FloatingText(`+${clearPoints}`, canvas.width / 2, canvas.height / 3, false));
+            } else { lastActionWasClear = false; comboStreak = 0; comboBadge.classList.remove('active'); }
         }
 
         function createExplosion(row, col, type) {
-            let cellX = BOARD_OFFSET_X + col * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
-            let cellY = BOARD_OFFSET_Y + row * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
-            let colorObj = COLORS[type];
-
-            for (let i = 0; i < 8; i++) {
-                particles.push(new Particle(cellX, cellY, colorObj));
-            }
+            for (let i = 0; i < 8; i++) particles.push(new Particle(BOARD_OFFSET_X + col * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2, BOARD_OFFSET_Y + row * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2, activeTheme.blocks[type]));
         }
 
-        // --- OLAY DİNLEYİCİLERİ ---
-        canvas.addEventListener('mousedown', startDragHandler);
-        window.addEventListener('mousemove', moveDragHandler);
-        window.addEventListener('mouseup', endDragHandler);
-
-        canvas.addEventListener('touchstart', (e) => { startDragHandler(e); e.preventDefault(); });
-        window.addEventListener('touchmove', (e) => { moveDragHandler(e); }, { passive: false });
-        window.addEventListener('touchend', (e) => { endDragHandler(e); });
+        canvas.addEventListener('mousedown', startDragHandler); window.addEventListener('mousemove', moveDragHandler); window.addEventListener('mouseup', endDragHandler);
+        // Dokunmatik cihazlar için eventler (kaymayı durduran preventDefault eklendi)
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDragHandler(e); }, { passive: false });
+        window.addEventListener('touchmove', (e) => { if(isDragging) e.preventDefault(); moveDragHandler(e); }, { passive: false });
+        window.addEventListener('touchend', endDragHandler);
 
         restartBtn.addEventListener('click', init);
-
-        // Oyna butonuna basınca kapak ekranını gizle ve oyunu başlat
-        playBtn.addEventListener('click', () => {
-            splashScreen.classList.add('hide');
-            init();
-        });
+        playBtn.addEventListener('click', () => { splashScreen.classList.add('hide'); init(); });
     </script>
 </body>
 </html>
