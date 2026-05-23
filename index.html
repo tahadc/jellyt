@@ -3,15 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Jelly T">
-    <title>Jelly T</title>
+    <title>Jelly T - Infinite Styles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap');
-
-        /* CSS DEĞİŞKENLERİ */
         :root {
             --bg-gradient: radial-gradient(circle, #fdf6ec 0%, #f4e3cf 100%);
             --board-border: #6b4f35;
@@ -20,132 +14,361 @@
             --ui-shadow: #e6c8a7;
         }
 
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background: var(--bg-gradient);
-            color: var(--ui-text);
             font-family: 'Fredoka', sans-serif;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        .game-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            margin: 0;
+            justify-content: center;
+            width: 440px;
+            max-height: 100vh;
+            max-height: 100dvh;
             padding: 10px;
             box-sizing: border-box;
-            user-select: none;
-            touch-action: none;
-            overflow: hidden;
-            transition: background 1.5s ease, color 1.5s ease;
         }
 
-        /* KAPAK EKRANI */
-        .splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, #9c88ff 0%, #3f3175 100%);
-            z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+        @media (max-height: 740px) or (max-width: 440px) {
+            .game-wrapper { transform: scale(0.85); transform-origin: center center; }
         }
-        .splash-screen.hide { transform: translateY(-100%); }
+        @media (max-height: 640px) { .game-wrapper { transform: scale(0.75); } }
+        @media (max-height: 560px) { .game-wrapper { transform: scale(0.65); } }
 
-        .splash-cube {
-            position: absolute; width: 12vw; height: 12vw; max-width: 50px; max-height: 50px;
-            border-radius: 12px; opacity: 0.7; box-shadow: inset -4px -4px 0px rgba(0,0,0,0.2), 0 8px 15px rgba(0,0,0,0.2);
-            animation: floatCube 4s ease-in-out infinite;
+        .header-panel {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            gap: 10px;
         }
-        .cube1 { background: #ff5c5c; top: 15%; left: 15%; animation-delay: 0s; }
-        .cube2 { background: #339af0; top: 20%; right: 15%; animation-delay: 1s; }
-        .cube3 { background: #51cf66; bottom: 25%; left: 20%; animation-delay: 0.5s; }
-        .cube4 { background: #fcc419; bottom: 20%; right: 20%; animation-delay: 1.5s; }
 
-        @keyframes floatCube { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(15deg); } }
-        @keyframes jellyBounce { 0%, 100% { transform: scale(1, 1) translateY(0); } 30% { transform: scale(1.15, 0.85) translateY(0); } 40% { transform: scale(0.85, 1.15) translateY(-15px); } 50% { transform: scale(1.05, 0.95) translateY(-15px); } 65% { transform: scale(0.98, 1.02) translateY(0); } }
-
-        .cover-title { font-size: 14vw; font-weight: 700; color: #ffffff; text-shadow: 0 4px 0 #2c1a4d, 0 8px 0 #2c1a4d, 0 16px 20px rgba(0, 0, 0, 0.4); margin-bottom: 5px; animation: jellyBounce 2s ease-in-out infinite; z-index: 2; }
-        @media (min-width: 500px) { .cover-title { font-size: 64px; } }
-        
-        .cover-subtitle { font-size: 5vw; color: #f5f4f8; margin-bottom: 40px; z-index: 2; }
-        @media (min-width: 500px) { .cover-subtitle { font-size: 20px; } }
-
-        .play-btn { background: #ff5722; color: white; border: 4px solid #ffffff; padding: 16px 45px; font-size: 26px; font-family: 'Fredoka', sans-serif; font-weight: 700; border-radius: 25px; box-shadow: 0 10px 0 #b33600; cursor: pointer; outline: none; z-index: 2; }
-        .play-btn:active { transform: translateY(6px); box-shadow: 0 4px 0 #b33600; }
-
-        /* OYUN ALANI */
-        .game-title { font-size: 8vw; font-weight: 700; color: #ff5722; text-shadow: 3px 3px 0px var(--board-border); margin: 5px 0 15px 0; text-align: center; }
-        @media (min-width: 500px) { .game-title { font-size: 36px; } }
-
-        .top-panel { width: 100%; max-width: 440px; display: flex; justify-content: space-between; align-items: stretch; gap: 10px; margin-bottom: 12px; }
-        .scores-wrapper { display: flex; flex: 1; gap: 10px; }
-        .score-box { background: #ffffff; padding: 10px 5px; border-radius: 16px; box-shadow: 0 6px 0 var(--ui-shadow); border: 3px solid var(--board-border); font-size: 16px; font-weight: 700; color: var(--ui-text); flex: 1; text-align: center; white-space: nowrap; transition: 1.5s ease; display: flex; flex-direction: column; justify-content: center;}
-        .score-box span { color: #ff5722; font-size: 18px;}
-
-        .help-btn {
-            background: #ffc107; color: white; border: 3px solid var(--board-border);
-            border-radius: 16px; box-shadow: 0 6px 0 #b28704; cursor: pointer; font-size: 24px;
-            width: 60px; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.1s, box-shadow 0.1s; outline: none; padding: 0;
+        .score-container {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
         }
-        .help-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b28704; }
 
-        .canvas-container {
-            position: relative; width: 100%; max-width: 440px; aspect-ratio: 440 / 640; margin-top: 5px;
+        .score-box {
+            background: rgba(255, 255, 255, 0.85);
+            border: 3px solid var(--board-border);
+            border-bottom-width: 6px;
+            border-radius: 14px;
+            padding: 6px 12px;
+            text-align: center;
+            min-width: 90px;
+            flex-grow: 1;
+            box-shadow: 0 4px 0 var(--ui-shadow);
         }
+
+        .score-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--ui-text);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .score-val { font-size: 20px; color: var(--ui-text); font-weight: bold; }
+
+        .level-panel { width: 100%; text-align: center; margin-bottom: 10px; }
+
+        .level-badge {
+            display: inline-block;
+            background: var(--board-border);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 4px 16px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        .action-btn {
+            background: #ff9800;
+            border: 3px solid var(--board-border);
+            border-bottom-width: 6px;
+            border-radius: 14px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 22px;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 0 var(--ui-shadow);
+            transition: transform 0.1s;
+        }
+
+        .action-btn:active {
+            transform: translateY(3px);
+            border-bottom-width: 3px;
+            box-shadow: 0 1px 0 var(--ui-shadow);
+        }
+
+        #menuBtn { background: #2196F3; }
+
+        .canvas-area { position: relative; width: 440px; height: 600px; }
+
         canvas {
-            width: 100%; height: 100%; background-color: var(--canvas-bg); border-radius: 20px;
-            border: 4px solid var(--board-border); box-shadow: 0 10px 0 var(--ui-shadow);
-            cursor: grab; position: absolute; top: 0; left: 0; transition: 1.5s ease;
+            background: var(--canvas-bg);
+            border-radius: 24px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+            display: block;
+            cursor: grab;
+            transition: background 0.5s ease;
         }
         canvas:active { cursor: grabbing; }
 
-        .combo-streak-badge {
-            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            background: #ffeb3b; padding: 10px 18px; border-radius: 20px; box-shadow: 0 8px 0 #dcc211;
-            border: 3px solid var(--board-border); font-size: 22px; font-weight: 700; color: #795548;
-            visibility: hidden; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center; pointer-events: none; z-index: 5;
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 10;
+            color: white;
+            text-align: center;
+            padding: 20px;
         }
-        .combo-streak-badge.active { visibility: visible; transform: translate(-50%, -50%) scale(1); }
 
-        .game-over-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; z-index: 10; }
-        .game-over-overlay.active { opacity: 1; pointer-events: auto; }
-        .game-over-panel { background: #ffffff; padding: 25px; border-radius: 20px; border: 4px solid var(--board-border); box-shadow: 0 10px 0 var(--ui-shadow); text-align: center; transform: scale(0.7); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 85%; }
-        .game-over-overlay.active .game-over-panel { transform: scale(1); }
-        .game-over-title { font-size: 28px; color: #ff5722; margin: 0 0 10px 0; }
-        .restart-btn { background: #51cf66; color: white; border: 3px solid var(--board-border); padding: 10px 20px; font-size: 20px; font-weight: 700; border-radius: 16px; box-shadow: 0 6px 0 #3b9c4d; cursor: pointer; margin-top: 15px; width: 100%; font-family: 'Fredoka', sans-serif;}
-        .restart-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #3b9c4d; }
+        .overlay.active { opacity: 1; pointer-events: auto; }
+        .overlay-title { font-size: 42px; margin-bottom: 10px; text-shadow: 0 4px 0 #000; font-weight: bold; }
+
+        .overlay-stats {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 15px 30px;
+            margin-bottom: 25px;
+            font-size: 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .big-play-btn {
+            background: #4caf50;
+            border: 4px solid #1b5e20;
+            border-bottom-width: 8px;
+            padding: 14px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            font-family: 'Fredoka', sans-serif;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .big-play-btn:active { transform: translateY(4px); border-bottom-width: 4px; }
+
+        /* --- YENİLENMİŞ GİRİŞ EKRANI (SPLASH SCREEN) STİLLERİ --- */
+        .splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle, #fdf6ec 0%, #e2d1bd 100%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .splash-screen.hide { opacity: 0; pointer-events: none; transform: scale(1.08); }
+
+        #splashBgCanvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 40px 30px;
+            border-radius: 32px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(107, 79, 53, 0.12);
+        }
+
+        /* 3D Jel Harf Grubu Container */
+        .jelly-title-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 5px;
+            perspective: 1000px;
+        }
+
+        /* Her bir harf bloğu */
+        .jelly-letter {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            width: 60px;
+            height: 65px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 16px;
+            border: 3px solid #6b4f35;
+            box-shadow: 0 6px 0 #6b4f35, inset 0 4px 0 rgba(255,255,255,0.4), 0 10px 15px rgba(0,0,0,0.1);
+            text-shadow: 0 3px 0 rgba(0,0,0,0.2);
+            animation: jellyWobble 2.5s infinite ease-in-out;
+            transform-origin: center bottom;
+        }
+
+        /* Alt Başlık */
+        .splash-subtitle {
+            font-size: 16px;
+            font-weight: 700;
+            color: #795548;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: -35px;
+            text-shadow: 0 2px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        /* Harflerin renkleri ve animasyon gecikmeleri */
+        .letter-j { background: #ff5c5c; animation-delay: 0.0s; }
+        .letter-e { background: #339af0; animation-delay: 0.15s; }
+        .letter-l1 { background: #51cf66; animation-delay: 0.3s; }
+        .letter-l2 { background: #fcc419; animation-delay: 0.45s; }
+        .letter-y { background: #b197fc; animation-delay: 0.6s; }
+        .letter-dash { background: #ff922b; animation-delay: 0.75s; width: 35px; }
+        .letter-t { background: #ec4899; animation-delay: 0.9s; }
+
+        /* Jel Sallanma Animasyonu */
+        @keyframes jellyWobble {
+            0%, 100% { transform: scale(1, 1) translateY(0); }
+            10% { transform: scale(1.15, 0.85) translateY(4px); }
+            30% { transform: scale(0.85, 1.15) translateY(-8px); }
+            50% { transform: scale(1.05, 0.95) translateY(2px); }
+            70% { transform: scale(0.98, 1.02) translateY(-1px); }
+        }
+
+        /* Parlayan Canlı Oyna Butonu */
+        .splash-play-btn {
+            background: #4caf50;
+            border: 4px solid #1b5e20;
+            border-bottom-width: 8px;
+            padding: 16px 65px;
+            font-size: 26px;
+            font-weight: 700;
+            color: white;
+            border-radius: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(76, 175, 80, 0.4);
+            font-family: 'Fredoka', sans-serif;
+            letter-spacing: 2px;
+            transition: background-color 0.2s, transform 0.1s;
+            animation: pulseBtn 2s infinite ease-in-out;
+        }
+
+        .splash-play-btn:hover { background: #45a049; }
+        .splash-play-btn:active {
+            transform: translateY(4px) scale(0.98);
+            border-bottom-width: 4px;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            animation: none;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(76, 175, 80, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 32px rgba(76, 175, 80, 0.6); }
+        }
     </style>
 </head>
 <body>
 
-    <div id="splashScreen" class="splash-screen">
-        <div class="splash-cube cube1"></div>
-        <div class="splash-cube cube2"></div>
-        <div class="splash-cube cube3"></div>
-        <div class="splash-cube cube4"></div>
-        <h1 class="cover-title">Jelly T</h1>
-        <p class="cover-subtitle">Bir Thesap Oyunudur // thesap.vercel.app</p>
-        <button id="playBtn" class="play-btn">OYNA!</button>
-    </div>
-
-    <div class="game-title">✨ Jelly T ✨</div>
-
-    <div class="top-panel">
-        <div class="scores-wrapper">
-            <div class="score-box">SKOR<br><span id="scoreText">0</span></div>
-            <div class="score-box">REKOR<br><span id="highScoreText">0</span></div>
+    <div class="splash-screen" id="splashScreen">
+        <canvas id="splashBgCanvas"></canvas>
+        <div class="splash-content">
+            <div class="jelly-title-container">
+                <div class="jelly-letter letter-j">J</div>
+                <div class="jelly-letter letter-e">E</div>
+                <div class="jelly-letter letter-l1">L</div>
+                <div class="jelly-letter letter-l2">L</div>
+                <div class="jelly-letter letter-y">Y</div>
+                <div class="jelly-letter letter-dash">-</div>
+                <div class="jelly-letter letter-t">T</div>
+            </div>
+            <div class="splash-subtitle">Infinite Styles</div>
+            <button class="splash-play-btn" id="playBtn">OYNA</button>
         </div>
-        <button id="helpBtn" class="help-btn">💡</button>
     </div>
-    
-    <div class="canvas-container">
-        <canvas id="gameCanvas" width="440" height="640"></canvas>
-        <div id="comboBadge" class="combo-streak-badge">COMBO x0 🔥</div>
-        
-        <div id="gameOverOverlay" class="game-over-overlay">
-            <div class="game-over-panel">
-                <h2 class="game-over-title">Oyun Bitti! 😭</h2>
-                <div style="font-size:18px; color:#795548; margin-bottom: 5px;">Skor: <span id="finalScore" style="color:#ff5722; font-weight:bold;">0</span></div>
-                <div style="font-size:18px; color:#795548;">Rekor: <span id="finalHighScore" style="color:#ff5722; font-weight:bold;">0</span></div>
-                <button id="restartBtn" class="restart-btn">Tekrar Oyna 🔄</button>
+
+    <div class="game-wrapper">
+        <div class="header-panel">
+            <div class="score-container">
+                <div class="score-box">
+                    <div class="score-label">SKOR</div>
+                    <div class="score-val" id="scoreText">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">EN YÜKSEK</div>
+                    <div class="score-val" id="highScoreText">0</div>
+                </div>
+            </div>
+            <button class="action-btn" id="helpBtn" title="İpucu Al">💡</button>
+            <button class="action-btn" id="menuBtn" title="Menüye Dön">🏠</button>
+        </div>
+
+        <div class="level-panel">
+            <span class="level-badge" id="levelLabel">LEVEL 1</span>
+        </div>
+
+        <div class="canvas-area">
+            <canvas id="gameCanvas" width="440" height="600"></canvas>
+
+            <div class="overlay" id="gameOverOverlay">
+                <div class="overlay-title">Oyun Bitti! 😮</div>
+                <div class="overlay-stats">
+                    <p>Skorun: <strong id="finalScore">0</strong></p>
+                    <p style="margin-top: 5px; font-size: 15px; opacity: 0.9;">En Yüksek: <span id="finalHighScore">0</span></p>
+                </div>
+                <button class="big-play-btn" id="restartBtn">Tekrar Dene</button>
             </div>
         </div>
     </div>
@@ -155,12 +378,17 @@
         const ctx = canvas.getContext('2d');
         const scoreText = document.getElementById('scoreText');
         const highScoreText = document.getElementById('highScoreText');
-        const comboBadge = document.getElementById('comboBadge');
+        const levelLabel = document.getElementById('levelLabel');
         const helpBtn = document.getElementById('helpBtn');
+        const menuBtn = document.getElementById('menuBtn');
         const gameOverOverlay = document.getElementById('gameOverOverlay');
         const restartBtn = document.getElementById('restartBtn');
         const splashScreen = document.getElementById('splashScreen');
         const playBtn = document.getElementById('playBtn');
+
+        // Giriş Ekranı Arka Plan Ayarları
+        const splashCanvas = document.getElementById('splashBgCanvas');
+        const sCtx = splashCanvas.getContext('2d');
 
         const GRID_SIZE = 8;
         const BOARD_OFFSET_X = 20;
@@ -169,11 +397,18 @@
         const CELL_GAP = 4;
         const DRAG_OFFSET_Y = 140;
 
+        // 10 BENZERSİZ SEVİYE TEMASI
         const THEMES = [
-            { bgGradient: 'radial-gradient(circle, #fdf6ec 0%, #f4e3cf 100%)', boardBorder: '#6b4f35', canvasBg: '#fffaf2', uiText: '#795548', uiShadow: '#e6c8a7', boardBg: '#fceddb', cellBg: '#eedbc5', poolBg: '#fbe9d5', blocks: { 1: { main: '#ff5c5c', light: '#ff8e8e', dark: '#d63031' }, 2: { main: '#339af0', light: '#74c0fc', dark: '#1c7ed6' }, 3: { main: '#51cf66', light: '#8ce99a', dark: '#37b24d' }, 4: { main: '#fcc419', light: '#ffe066', dark: '#f59f00' }, 5: { main: '#b197fc', light: '#e5dbff', dark: '#845ef7' }, 6: { main: '#ff922b', light: '#ffc078', dark: '#f76707' } } },
-            { bgGradient: 'radial-gradient(circle, #e0f7fa 0%, #b2ebf2 100%)', boardBorder: '#006064', canvasBg: '#e0f7fa', uiText: '#004d40', uiShadow: '#80deea', boardBg: '#b2ebf2', cellBg: '#80deea', poolBg: '#b2ebf2', blocks: { 1: { main: '#00bcd4', light: '#4dd0e1', dark: '#00838f' }, 2: { main: '#ff4081', light: '#ff80ab', dark: '#c51162' }, 3: { main: '#00e676', light: '#69f0ae', dark: '#00c853' }, 4: { main: '#ffea00', light: '#ffff00', dark: '#ffd600' }, 5: { main: '#d500f9', light: '#e040fb', dark: '#aa00ff' }, 6: { main: '#ff9100', light: '#ffd180', dark: '#ff6d00' } } },
-            { bgGradient: 'radial-gradient(circle, #e8f5e9 0%, #c8e6c9 100%)', boardBorder: '#1b5e20', canvasBg: '#e8f5e9', uiText: '#1b5e20', uiShadow: '#a5d6a7', boardBg: '#c8e6c9', cellBg: '#a5d6a7', poolBg: '#c8e6c9', blocks: { 1: { main: '#e53935', light: '#ef5350', dark: '#b71c1c' }, 2: { main: '#1e88e5', light: '#42a5f5', dark: '#0d47a1' }, 3: { main: '#43a047', light: '#66bb6a', dark: '#1b5e20' }, 4: { main: '#fdd835', light: '#ffee58', dark: '#f57f17' }, 5: { main: '#8e24aa', light: '#ab47bc', dark: '#4a148c' }, 6: { main: '#8d6e63', light: '#bcaaa4', dark: '#4e342e' } } },
-            { bgGradient: 'radial-gradient(circle, #311b92 0%, #1a237e 100%)', boardBorder: '#b388ff', canvasBg: '#212121', uiText: '#ffffff', uiShadow: '#512da8', boardBg: '#311b92', cellBg: '#4527a0', poolBg: '#311b92', blocks: { 1: { main: '#ff1744', light: '#ff4081', dark: '#d50000' }, 2: { main: '#00e5ff', light: '#18ffff', dark: '#00b8d4' }, 3: { main: '#76ff03', light: '#b2ff59', dark: '#64dd17' }, 4: { main: '#ffea00', light: '#ffff00', dark: '#ffd600' }, 5: { main: '#d500f9', light: '#e040fb', dark: '#aa00ff' }, 6: { main: '#ff9100', light: '#ffd180', dark: '#ff6d00' } } }
+            { style: 'jelly', bgGradient: 'radial-gradient(circle, #fdf6ec 0%, #f4e3cf 100%)', boardBorder: '#6b4f35', canvasBg: '#fffaf2', uiText: '#795548', uiShadow: '#e6c8a7', boardBg: '#fceddb', cellBg: '#eedbc5', poolBg: '#fbe9d5', blocks: { 1: { main: '#ff5c5c', light: '#ff8e8e', dark: '#d63031' }, 2: { main: '#339af0', light: '#74c0fc', dark: '#1c7ed6' }, 3: { main: '#51cf66', light: '#8ce99a', dark: '#37b24d' }, 4: { main: '#fcc419', light: '#ffe066', dark: '#f59f00' }, 5: { main: '#b197fc', light: '#e5dbff', dark: '#845ef7' }, 6: { main: '#ff922b', light: '#ffc078', dark: '#f76707' } } },
+            { style: 'neon', bgGradient: 'radial-gradient(circle, #0f172a 0%, #020617 100%)', boardBorder: '#38bdf8', canvasBg: '#0b0f19', uiText: '#38bdf8', uiShadow: '#1e293b', boardBg: '#1e293b', cellBg: '#0f172a', poolBg: '#111827', blocks: { 1: { main: '#f43f5e', light: '#fda4af', dark: '#4c0519' }, 2: { main: '#06b6d4', light: '#67e8f9', dark: '#083344' }, 3: { main: '#10b981', light: '#6ee7b7', dark: '#064e3b' }, 4: { main: '#eab308', light: '#fef08a', dark: '#422006' }, 5: { main: '#a855f7', light: '#d8b4fe', dark: '#3b0764' }, 6: { main: '#f97316', light: '#ffedd5', dark: '#431407' } } },
+            { style: 'arcade', bgGradient: 'radial-gradient(circle, #2d3748 0%, #1a202c 100%)', boardBorder: '#e2e8f0', canvasBg: '#2d3748', uiText: '#ffffff', uiShadow: '#1a202c', boardBg: '#4a5568', cellBg: '#1a202c', poolBg: '#4a5568', blocks: { 1: { main: '#e53e3e', light: '#feb2b2', dark: '#9b2c2c' }, 2: { main: '#3182ce', light: '#90cdf4', dark: '#2b6cb0' }, 3: { main: '#38a169', light: '#9ae6b4', dark: '#2f855a' }, 4: { main: '#dd6b20', light: '#fbd38d', dark: '#c05621' }, 5: { main: '#805ad5', light: '#d6bcfa', dark: '#553c9a' }, 6: { main: '#319795', light: '#4fd1c5', dark: '#234e52' } } },
+            { style: 'glass', bgGradient: 'radial-gradient(circle, #311b92 0%, #1a237e 100%)', boardBorder: '#b388ff', canvasBg: '#121214', uiText: '#ffffff', uiShadow: '#512da8', boardBg: '#1f1a3a', cellBg: '#2a244d', poolBg: '#1f1a3a', blocks: { 1: { main: 'rgba(255, 23, 68, 0.75)', light: '#ff8a80', dark: '#b71c1c' }, 2: { main: 'rgba(0, 229, 255, 0.75)', light: '#84ffff', dark: '#006064' }, 3: { main: 'rgba(118, 255, 3, 0.75)', light: '#ccff90', dark: '#33691e' }, 4: { main: 'rgba(255, 234, 0, 0.75)', light: '#ffff8d', dark: '#f57f17' }, 5: { main: 'rgba(213, 0, 249, 0.75)', light: '#f50057', dark: '#4a148c' }, 6: { main: 'rgba(255, 145, 0, 0.75)', light: '#ffd180', dark: '#e65100' } } },
+            { style: 'minimal', bgGradient: 'radial-gradient(circle, #f8fafc 0%, #e2e8f0 100%)', boardBorder: '#475569', canvasBg: '#ffffff', uiText: '#1e293b', uiShadow: '#cbd5e1', boardBg: '#f1f5f9', cellBg: '#e2e8f0', poolBg: '#f1f5f9', blocks: { 1: { main: '#f43f5e', light: '#f43f5e', dark: '#e11d48' }, 2: { main: '#3b82f6', light: '#3b82f6', dark: '#2563eb' }, 3: { main: '#10b981', light: '#10b981', dark: '#059669' }, 4: { main: '#f59e0b', light: '#f59e0b', dark: '#d97706' }, 5: { main: '#8b5cf6', light: '#8b5cf6', dark: '#7c3aed' }, 6: { main: '#ec4899', light: '#ec4899', dark: '#db2777' } } },
+            { style: 'candy', bgGradient: 'radial-gradient(circle, #fdf2f8 0%, #fce7f3 100%)', boardBorder: '#db2777', canvasBg: '#fff1f2', uiText: '#9d174d', uiShadow: '#fbcfe8', boardBg: '#fce7f3', cellBg: '#fbcfe8', poolBg: '#fce7f3', blocks: { 1: { main: '#ff758f', light: '#ffb3c1', dark: '#c9184a' }, 2: { main: '#a2d2ff', light: '#bde0fe', dark: '#48cae4' }, 3: { main: '#b7e4c7', light: '#d8f3dc', dark: '#52b788' }, 4: { main: '#fde2e4', light: '#ffffff', dark: '#ffb5a7' }, 5: { main: '#e2afff', light: '#f3d8ff', dark: '#b388ff' }, 6: { main: '#ffca3a', light: '#ffda3d', dark: '#ff9f1c' } } },
+            { style: 'chalk', bgGradient: 'radial-gradient(circle, #2d3748 0%, #1a202c 100%)', boardBorder: '#a0aec0', canvasBg: '#1e2530', uiText: '#e2e8f0', uiShadow: '#2d3748', boardBg: '#2d3748', cellBg: '#1a202c', poolBg: '#2d3748', blocks: { 1: { main: '#fc8181', light: '#fff', dark: '#e53e3e' }, 2: { main: '#63b3ed', light: '#fff', dark: '#3182ce' }, 3: { main: '#68d391', light: '#fff', dark: '#38a169' }, 4: { main: '#f6e05e', light: '#fff', dark: '#d69e2e' }, 5: { main: '#b794f4', light: '#fff', dark: '#805ad5' }, 6: { main: '#f6ad55', light: '#fff', dark: '#dd6b20' } } },
+            { style: 'gold', bgGradient: 'radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%)', boardBorder: '#d4af37', canvasBg: '#151515', uiText: '#d4af37', uiShadow: '#2a2a2a', boardBg: '#262626', cellBg: '#1a1a1a', poolBg: '#262626', blocks: { 1: { main: '#d4af37', light: '#fff9e6', dark: '#aa8010' }, 2: { main: '#aa8010', light: '#d4af37', dark: '#554008' }, 3: { main: '#e6c875', light: '#ffffff', dark: '#b3923b' }, 4: { main: '#997d34', light: '#d4af37', dark: '#4c3e1a' }, 5: { main: '#f3e5ab', light: '#ffffff', dark: '#c2b280' }, 6: { main: '#cfb53b', light: '#fff3b3', dark: '#917e26' } } },
+            { style: 'volcanic', bgGradient: 'radial-gradient(circle, #1c1917 0%, #0c0a09 100%)', boardBorder: '#ea580c', canvasBg: '#141210', uiText: '#f97316', uiShadow: '#292524', boardBg: '#292524', cellBg: '#1c1917', poolBg: '#292524', blocks: { 1: { main: '#ef4444', light: '#fca5a5', dark: '#7f1d1d' }, 2: { main: '#f97316', light: '#fed7aa', dark: '#7c2d12' }, 3: { main: '#b45309', light: '#fde68a', dark: '#451a03' }, 4: { main: '#78716c', light: '#d6d3d1', dark: '#292524' }, 5: { main: '#dc2626', light: '#fee2e2', dark: '#991b1b' }, 6: { main: '#ea580c', light: '#ffedd5', dark: '#c2410c' } } },
+            { style: 'plasma', bgGradient: 'radial-gradient(circle, #2e1065 0%, #0f172a 100%)', boardBorder: '#d946ef', canvasBg: '#1e1b4b', uiText: '#fae8ff', uiShadow: '#3b0764', boardBg: '#3b0764', cellBg: '#1e1b4b', poolBg: '#3b0764', blocks: { 1: { main: '#d946ef', light: '#fdf4ff', dark: '#701a75' }, 2: { main: '#8b5cf6', light: '#ede9fe', dark: '#4c1d95' }, 3: { main: '#ec4899', light: '#fce7f3', dark: '#9d174d' }, 4: { main: '#3b82f6', light: '#dbeafe', dark: '#172554' }, 5: { main: '#6366f1', light: '#e0e7ff', dark: '#312e81' }, 6: { main: '#a855f7', light: '#f3e8ff', dark: '#581c87' } } }
         ];
         
         const SHAPE_TEMPLATES = [
@@ -194,360 +429,627 @@
         const poolSlots = [{ x: 75, y: 520 }, { x: 220, y: 520 }, { x: 365, y: 520 }];
         let activeHint = null, isLoopRunning = false;
 
-        // --- HAFIZA FONKSİYONLARI ---
-        function saveGameState() {
-            if (isGameOver) return;
-            const gameState = {
-                grid: grid,
-                score: score,
-                poolData: pool.map(shape => ({ matrix: shape.matrix, type: shape.type }))
-            };
-            try { localStorage.setItem('jellyT_saveGame', JSON.stringify(gameState)); } catch(e){}
+        // --- GİRİŞ EKRANI ARKA PLAN ANIMASYONU KODLARI ---
+        let splashShapes = [];
+        function resizeSplashCanvas() {
+            splashCanvas.width = window.innerWidth;
+            splashCanvas.height = window.innerHeight;
         }
+        window.addEventListener('resize', resizeSplashCanvas);
+        resizeSplashCanvas();
 
-        function loadGameState() {
-            try {
-                const saved = localStorage.getItem('jellyT_saveGame');
-                if (!saved) return false;
-                const data = JSON.parse(saved);
-                grid = data.grid;
-                score = data.score;
-                pool = data.poolData.map((pd, idx) => new Shape({ matrix: pd.matrix, type: pd.type }, idx));
-                scoreText.innerText = score;
-                return true;
-            } catch (e) { return false; }
-        }
-
-        function updateTheme() {
-            let newLevel = Math.floor(score / 1000);
-            if (newLevel > THEMES.length - 1) newLevel = THEMES.length - 1;
-            if (newLevel > currentLevel || (currentLevel === 0 && score === 0)) {
-                if (newLevel > currentLevel && currentLevel !== -1) {
-                    for (let i = 0; i < 60; i++) particles.push(new Particle(canvas.width/2, canvas.height/2, activeTheme.blocks[Math.floor(Math.random()*6)+1], true));
-                    floatingTexts.push(new FloatingText("✨ BRAVOOO! ✨", canvas.width/2, canvas.height/2, true));
+        class SplashFallingShape {
+            constructor() {
+                this.x = Math.random() * splashCanvas.width;
+                this.y = Math.random() * -splashCanvas.height - 50;
+                this.size = Math.random() * 20 + 20;
+                this.speed = Math.random() * 1.5 + 1;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.02;
+                let randomTheme = THEMES[Math.floor(Math.random() * THEMES.length)];
+                this.colorObj = randomTheme.blocks[Math.floor(Math.random() * 6) + 1];
+            }
+            update() {
+                this.y += this.speed;
+                this.rotation += this.rotSpeed;
+                if (this.y > splashCanvas.height + 50) {
+                    this.y = -50;
+                    this.x = Math.random() * splashCanvas.width;
                 }
-                currentLevel = newLevel; activeTheme = THEMES[currentLevel];
-                document.documentElement.style.setProperty('--bg-gradient', activeTheme.bgGradient);
-                document.documentElement.style.setProperty('--board-border', activeTheme.boardBorder);
-                document.documentElement.style.setProperty('--canvas-bg', activeTheme.canvasBg);
-                document.documentElement.style.setProperty('--ui-text', activeTheme.uiText);
-                document.documentElement.style.setProperty('--ui-shadow', activeTheme.uiShadow);
+            }
+            draw() {
+                sCtx.save();
+                sCtx.translate(this.x, this.y);
+                sCtx.rotate(this.rotation);
+                sCtx.globalAlpha = 0.25;
+                
+                sCtx.fillStyle = this.colorObj.dark;
+                sCtx.beginPath(); sCtx.roundRect(-this.size/2, -this.size/2 + 3, this.size, this.size, 6); sCtx.fill();
+                
+                sCtx.fillStyle = this.colorObj.main;
+                sCtx.beginPath(); sCtx.roundRect(-this.size/2, -this.size/2, this.size, this.size, 6); sCtx.fill();
+                
+                sCtx.restore();
             }
         }
 
-        function drawJellyBlock(ctx, x, y, size, colorObj, scale = 1.0) {
+        for(let i=0; i<25; i++) {
+            splashShapes.push(new SplashFallingShape());
+        }
+
+        function animateSplash() {
+            if (splashScreen.classList.contains('hide')) return;
+            sCtx.clearRect(0, 0, splashCanvas.width, splashCanvas.height);
+            splashShapes.forEach(shape => {
+                shape.update();
+                shape.draw();
+            });
+            requestAnimationFrame(animateSplash);
+        }
+        animateSplash();
+
+        // Giriş butonuna basıldığında ekranı gizleme tetikleyicisi
+        playBtn.addEventListener('click', () => {
+            splashScreen.classList.add('hide');
+            initGame(); // Oyun döngüsünü başlatan orijinal fonksiyon çağrısı eklendi.
+        });
+        // ------------------------------------------------
+
+        function loadHighScore() {
+            try {
+                const saved = localStorage.getItem('jellyt_highscore');
+                highScore = saved ? parseInt(saved) : 0;
+                highScoreText.textContent = highScore;
+            } catch(e) { highScore = 0; }
+        }
+
+        function saveHighScore() {
+            try { localStorage.setItem('jellyt_highscore', highScore); } catch(e){}
+        }
+
+        function updateThemeStyles() {
+            document.documentElement.style.setProperty('--bg-gradient', activeTheme.bgGradient);
+            document.documentElement.style.setProperty('--board-border', activeTheme.boardBorder);
+            document.documentElement.style.setProperty('--canvas-bg', activeTheme.canvasBg);
+            document.documentElement.style.setProperty('--ui-text', activeTheme.uiText);
+            document.documentElement.style.setProperty('--ui-shadow', activeTheme.uiShadow);
+            levelLabel.textContent = `LEVEL ${currentLevel + 1} (${activeTheme.style.toUpperCase()})`;
+        }
+
+        function generateRandomShape() {
+            const template = SHAPE_TEMPLATES[Math.floor(Math.random() * SHAPE_TEMPLATES.length)];
+            const colorId = Math.floor(Math.random() * 6) + 1;
+            return {
+                matrix: JSON.parse(JSON.stringify(template.matrix)),
+                type: template.type,
+                colorId: colorId,
+                placed: false
+            };
+        }
+
+        function refillPool() {
+            pool = [generateRandomShape(), generateRandomShape(), generateRandomShape()];
+        }
+
+        function checkLevelProgression() {
+            const levelThresholds = [500, 1200, 2200, 3500, 5000, 7000, 9500, 12500, 16000, 20000];
+            let targetLevel = 0;
+            for(let i=0; i<levelThresholds.length; i++) {
+                if(score >= levelThresholds[i]) targetLevel = i + 1;
+            }
+            if(targetLevel >= THEMES.length) targetLevel = THEMES.length - 1;
+            
+            if(targetLevel !== currentLevel) {
+                currentLevel = targetLevel;
+                activeTheme = THEMES[currentLevel];
+                updateThemeStyles();
+                createFloatingText(220, 300, "LEVEL UP!", "#ff9800", 32);
+            }
+        }
+
+        function addScore(amount, x, y, label="") {
+            score += amount;
+            scoreText.textContent = score;
+            if(score > highScore) {
+                highScore = score;
+                highScoreText.textContent = highScore;
+                saveHighScore();
+            }
+            if(label) createFloatingText(x, y, `${label} +${amount}`, "#4caf50", 20);
+            else createFloatingText(x, y, `+${amount}`, activeTheme.blocks[1].main, 18);
+            checkLevelProgression();
+        }
+
+        function createFloatingText(x, y, text, color, size=18) {
+            floatingTexts.push({ x, y, text, color, size, alpha: 1, life: 1 });
+        }
+
+        function createExplosionParticles(gridX, gridY, colorId) {
+            const cX = BOARD_OFFSET_X + gridX * (CELL_SIZE + CELL_GAP) + CELL_SIZE/2;
+            const cY = BOARD_OFFSET_Y + gridY * (CELL_SIZE + CELL_GAP) + CELL_SIZE/2;
+            const colors = activeTheme.blocks[colorId] || { main: '#fff', light: '#fff' };
+            for(let i=0; i<8; i++) {
+                particles.push({
+                    x: cX, y: cY,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    radius: Math.random() * 4 + 3,
+                    color: Math.random() > 0.4 ? colors.main : colors.light,
+                    life: 1
+                });
+            }
+        }
+
+        function canPlaceShape(matrix, startRow, startCol) {
+            const R = matrix.length;
+            const C = matrix[0].length;
+            if(startRow < 0 || startRow + R > GRID_SIZE || startCol < 0 || startCol + C > GRID_SIZE) return false;
+            for(let r=0; r<R; r++) {
+                for(let c=0; c<C; c++) {
+                    if(matrix[r][c] !== 0 && grid[startRow + r][startCol + c] !== 0) return false;
+                }
+            }
+            return true;
+        }
+
+        function placeShape(idx, startRow, startCol) {
+            const shape = pool[idx];
+            const R = shape.matrix.length;
+            const C = shape.matrix[0].length;
+            
+            for(let r=0; r<R; r++) {
+                for(let c=0; c<C; c++) {
+                    if(shape.matrix[r][c] !== 0) {
+                        grid[startRow + r][startCol + c] = shape.colorId;
+                    }
+                }
+            }
+            shape.placed = true;
+            activeHint = null;
+
+            let blocksCount = 0;
+            for(let r=0; r<R; r++) {
+                for(let c=0; c<C; c++) { if(shape.matrix[r][c] !== 0) blocksCount++; }
+            }
+            
+            const dropX = BOARD_OFFSET_X + startCol * (CELL_SIZE+CELL_GAP) + (C*CELL_SIZE)/2;
+            const dropY = BOARD_OFFSET_Y + startRow * (CELL_SIZE+CELL_GAP) + (R*CELL_SIZE)/2;
+            addScore(blocksCount, dropX, dropY);
+
+            checkLines();
+
+            if(pool.every(s => s.placed)) refillPool();
+            checkGameOver();
+        }
+
+        function checkLines() {
+            let fullRows = [];
+            let fullCols = [];
+
+            for(let r=0; r<GRID_SIZE; r++) {
+                if(grid[r].every(cell => cell !== 0)) fullRows.push(r);
+            }
+
+            for(let c=0; c<GRID_SIZE; c++) {
+                let match = true;
+                for(let r=0; r<GRID_SIZE; r++) {
+                    if(grid[r][c] === 0) { match = false; break; }
+                }
+                if(match) fullCols.push(c);
+            }
+
+            const totalCleared = fullRows.length + fullCols.length;
+            if(totalCleared > 0) {
+                if(lastActionWasClear) comboStreak++;
+                else { comboStreak = 1; lastActionWasClear = true; }
+
+                fullRows.forEach(r => {
+                    for(let c=0; c<GRID_SIZE; c++) {
+                        createExplosionParticles(c, r, grid[r][c]);
+                        grid[r][c] = 0;
+                    }
+                });
+
+                fullCols.forEach(c => {
+                    for(let r=0; r<GRID_SIZE; r++) {
+                        if(grid[r][c] !== 0) {
+                            createExplosionParticles(c, r, grid[r][c]);
+                            grid[r][c] = 0;
+                        }
+                    }
+                });
+
+                let basePoints = totalCleared * 100;
+                let comboBonus = (comboStreak - 1) * 30;
+                let finalPoints = basePoints + comboBonus;
+                
+                let label = totalCleared > 1 ? `MULTI x${totalCleared}!` : "TEMİZLEME!";
+                if(comboStreak > 1) label += ` COMBO x${comboStreak}!`;
+                
+                addScore(finalPoints, 220, 200, label);
+            } else {
+                lastActionWasClear = false;
+                comboStreak = 0;
+            }
+        }
+
+        function checkGameOver() {
+            for(let i=0; i<pool.length; i++) {
+                if(pool[i].placed) continue;
+                if(hasAnyValidMove(pool[i].matrix)) return;
+            }
+            triggerGameOver();
+        }
+
+        function hasAnyValidMove(matrix) {
+            const R = matrix.length;
+            const C = matrix[0].length;
+            for(let r=0; r <= GRID_SIZE - R; r++) {
+                for(let c=0; c <= GRID_SIZE - C; c++) {
+                    if(canPlaceShape(matrix, r, c)) return true;
+                }
+            }
+            return false;
+        }
+
+        function triggerGameOver() {
+            isGameOver = true;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalHighScore').textContent = highScore;
+            gameOverOverlay.classList.add('active');
+        }
+
+        function findBestHint() {
+            let options = [];
+            for(let i=0; i<pool.length; i++) {
+                if(pool[i].placed) continue;
+                const matrix = pool[i].matrix;
+                const R = matrix.length;
+                const C = matrix[0].length;
+                
+                for(let r=0; r <= GRID_SIZE - R; r++) {
+                    for(let c=0; c <= GRID_SIZE - C; c++) {
+                        if(canPlaceShape(matrix, r, c)) {
+                            let simulatedGrid = grid.map(row => [...row]);
+                            for(let pr=0; pr<R; pr++) {
+                                for(let pc=0; pc<C; pc++) {
+                                    if(matrix[pr][pc]) simulatedGrid[r+pr][c+pc] = 1;
+                                }
+                            }
+                            let cleared = 0;
+                            for(let sr=0; sr<GRID_SIZE; sr++) {
+                                if(simulatedGrid[sr].every(v => v !== 0)) cleared++;
+                            }
+                            for(let sc=0; sc<GRID_SIZE; sc++) {
+                                let ok = true;
+                                for(let sr=0; sr<GRID_SIZE; sr++) { if(simulatedGrid[sr][sc] === 0) ok = false; }
+                                if(ok) cleared++;
+                            }
+                            options.push({ poolIdx: i, row: r, col: c, weight: cleared * 100 + (8 - r) });
+                        }
+                    }
+                }
+            }
+            if(options.length > 0) {
+                options.sort((a,b) => b.weight - a.weight);
+                return options[0];
+            }
+            return null;
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * (canvas.width / rect.width),
+                y: (clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function handleStart(pos) {
+            if(isGameOver) return;
+            activeHint = null;
+            for(let i=0; i<pool.length; i++) {
+                if(pool[i].placed) continue;
+                const slot = poolSlots[i];
+                const sW = pool[i].matrix[0].length * (CELL_SIZE*0.55);
+                const sH = pool[i].matrix.length * (CELL_SIZE*0.55);
+                if(pos.x >= slot.x - sW/2 - 15 && pos.x <= slot.x + sW/2 + 15 &&
+                   pos.y >= slot.y - sH/2 - 15 && pos.y <= slot.y + sH/2 + 15) {
+                    isDragging = true;
+                    dragIdx = i;
+                    dragX = pos.x;
+                    dragY = pos.y;
+                    break;
+                }
+            }
+        }
+
+        function handleMove(pos) {
+            if(!isDragging) return;
+            dragX = pos.x;
+            dragY = pos.y;
+        }
+
+        function handleEnd() {
+            if(!isDragging) return;
+            const shape = pool[dragIdx];
+            const targetY = dragY - DRAG_OFFSET_Y;
+            const targetX = dragX;
+            
+            const shapeWidth = shape.matrix[0].length * (CELL_SIZE + CELL_GAP);
+            const shapeHeight = shape.matrix.length * (CELL_SIZE + CELL_GAP);
+            
+            const topLeftX = targetX - shapeWidth / 2;
+            const topLeftY = targetY - shapeHeight / 2;
+            
+            const col = Math.round((topLeftX - BOARD_OFFSET_X) / (CELL_SIZE + CELL_GAP));
+            const row = Math.round((topLeftY - BOARD_OFFSET_Y) / (CELL_SIZE + CELL_GAP));
+            
+            if(canPlaceShape(shape.matrix, row, col)) {
+                placeShape(dragIdx, row, col);
+            }
+            
+            isDragging = false;
+            dragIdx = -1;
+        }
+
+        // Event Listeners
+        canvas.addEventListener('mousedown', e => handleStart(getMousePos(e)));
+        window.addEventListener('mousemove', e => handleMove(getMousePos(e)));
+        window.addEventListener('mouseup', handleEnd);
+
+        canvas.addEventListener('touchstart', e => { e.preventDefault(); handleStart(getMousePos(e)); }, {passive:false});
+        canvas.addEventListener('touchmove', e => { e.preventDefault(); handleMove(getMousePos(e)); }, {passive:false});
+        canvas.addEventListener('touchend', e => { e.preventDefault(); handleEnd(); }, {passive:false});
+
+        helpBtn.addEventListener('click', () => {
+            if(isGameOver) return;
+            const hint = findBestHint();
+            if(hint) activeHint = hint;
+        });
+
+        menuBtn.addEventListener('click', () => {
+            splashScreen.classList.remove('hide');
+            animateSplash();
+        });
+
+        restartBtn.addEventListener('click', () => {
+            initGame();
+        });
+
+        function drawRoundRect(x, y, w, h, r, fill, stroke, strokeW=3, shadowColor="", shadowBlur=0) {
             ctx.save();
-            ctx.fillStyle = colorObj.dark; ctx.beginPath(); ctx.roundRect(x, y + (3*scale), size, size, 10*scale); ctx.fill();
-            let grad = ctx.createLinearGradient(x, y, x, y + size);
-            grad.addColorStop(0, colorObj.light); grad.addColorStop(1, colorObj.main);
-            ctx.fillStyle = grad; ctx.beginPath(); ctx.roundRect(x, y, size, size, 10*scale); ctx.fill();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 2*scale; ctx.beginPath(); ctx.roundRect(x+(2*scale), y+(2*scale), size-(4*scale), size-(4*scale), 8*scale); ctx.stroke();
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)'; ctx.beginPath(); ctx.arc(x+(8*scale), y+(8*scale), 3*scale, 0, Math.PI*2); ctx.fill();
-            ctx.restore();
-        }
-
-        function drawHintBlock(ctx, x, y, size) {
-            ctx.save();
-            let alpha = Math.abs(Math.sin(pulseTime * 3)) * 0.5 + 0.2;
-            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(x, y, size, size, 8); ctx.fill(); ctx.stroke();
-            ctx.restore();
-        }
-
-        class Particle {
-            constructor(x, y, colorObj, isConfetti=false) {
-                this.x = x; this.y = y; this.vx = (Math.random()-0.5)*(isConfetti?15:8); this.vy = (Math.random()-0.5)*(isConfetti?15:8)-(isConfetti?5:2);
-                this.size = Math.random()*6+4; this.alpha = 1; this.color = colorObj.main; this.gravity = 0.15;
+            if(shadowColor && shadowBlur > 0) {
+                ctx.shadowColor = shadowColor;
+                ctx.shadowBlur = shadowBlur;
+                ctx.shadowOffsetY = 3;
             }
-            update() { this.x += this.vx; this.y += this.vy; this.vy += this.gravity; this.alpha -= 0.015; }
-            draw(ctx) { ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
-        }
-
-        class FloatingText {
-            constructor(text, x, y, isSpecial=false) { this.text = text; this.x = x; this.y = y; this.alpha = 1; this.scale = 0.5; this.isSpecial = isSpecial; this.vy = -3; }
-            update() { this.y += this.vy; this.vy *= 0.92; if(this.scale<1.3) this.scale+=0.1; this.alpha-=0.01; }
-            draw(ctx) { ctx.save(); ctx.globalAlpha = this.alpha; ctx.translate(this.x, this.y); ctx.scale(this.scale, this.scale); ctx.font = this.isSpecial ? "bold 36px 'Fredoka'" : "bold 22px 'Fredoka'"; ctx.textAlign = "center"; ctx.fillStyle = activeTheme.boardBorder; ctx.fillText(this.text, 2, 2); ctx.fillStyle = this.isSpecial ? "#ffeb3b" : "#ff5722"; ctx.fillText(this.text, 0, 0); ctx.restore(); }
-        }
-
-        class Shape {
-            constructor(template, slotIdx) {
-                this.matrix = template.matrix; this.type = template.type; this.slotIdx = slotIdx;
-                this.rows = this.matrix.length; this.cols = this.matrix[0].length;
-                this.scaleInPool = (this.cols > 2 || this.rows > 2) ? 0.42 : 0.55; this.animScale = this.scaleInPool; 
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, r);
+            if(fill) { ctx.fillStyle = fill; ctx.fill(); }
+            ctx.restore();
+            
+            if(stroke) {
+                ctx.lineWidth = strokeW;
+                ctx.strokeStyle = stroke;
+                ctx.stroke();
             }
-            draw(ctx, customX = null, customY = null, isBeingDragged = false) {
+        }
+
+        function drawCellDesign(x, y, size, colorObj, style) {
+            if(style === 'minimal') {
+                drawRoundRect(x, y, size, size, 6, colorObj.main);
+            } else if(style === 'neon') {
                 ctx.save();
-                this.animScale += ((isBeingDragged ? 1.0 : this.scaleInPool) - this.animScale) * 0.25;
-                let bounceY = (!isBeingDragged && !isGameOver) ? Math.sin(pulseTime + this.slotIdx) * 4 : 0;
-                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) bounceY -= 10;
-                let shapeW = this.cols * CELL_SIZE + (this.cols - 1) * CELL_GAP;
-                let shapeH = this.rows * CELL_SIZE + (this.rows - 1) * CELL_GAP;
-                let startX = customX !== null ? customX - (shapeW * this.animScale) / 2 : poolSlots[this.slotIdx].x - (shapeW * this.animScale) / 2;
-                let startY = customY !== null ? customY - (shapeH * this.animScale) / 2 : poolSlots[this.slotIdx].y - (shapeH * this.animScale) / 2 + bounceY;
-                if (activeHint && activeHint.shapeIdx === this.slotIdx && !isBeingDragged) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 15; }
-                for (let r = 0; r < this.rows; r++) {
-                    for (let c = 0; c < this.cols; c++) {
-                        if (this.matrix[r][c] === 1) {
-                            drawJellyBlock(ctx, startX + c * (CELL_SIZE + CELL_GAP) * this.animScale, startY + r * (CELL_SIZE + CELL_GAP) * this.animScale, CELL_SIZE * this.animScale, activeTheme.blocks[this.type], this.animScale);
+                ctx.shadowColor = colorObj.main; ctx.shadowBlur = 10;
+                drawRoundRect(x, y, size, size, 8, 'transparent', colorObj.main, 3);
+                drawRoundRect(x+4, y+4, size-8, size-8, 4, colorObj.dark);
+                ctx.restore();
+            } else if(style === 'chalk') {
+                drawRoundRect(x+2, y+2, size-4, size-4, 4, colorObj.main, 'rgba(255,255,255,0.4)', 2);
+            } else if(style === 'glass') {
+                drawRoundRect(x, y, size, size, 10, colorObj.main, 'rgba(255,255,255,0.2)', 1);
+                drawRoundRect(x+3, y+3, size-6, size/2-3, [6,6,0,0], 'rgba(255,255,255,0.15)');
+            } else { // Jelly, Candy, Gold vb. 3D Temalar
+                drawRoundRect(x, y+4, size, size-4, 10, colorObj.dark);
+                drawRoundRect(x, y, size, size-3, 10, colorObj.main);
+                drawRoundRect(x+4, y+4, size-8, 6, 3, colorObj.light);
+            }
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pulseTime += 0.04;
+
+            // Oyun Alanı Çerçevesi
+            const boardW = GRID_SIZE * (CELL_SIZE + CELL_GAP) - CELL_GAP + 24;
+            const boardH = GRID_SIZE * (CELL_SIZE + CELL_GAP) - CELL_GAP + 24;
+            drawRoundRect(BOARD_OFFSET_X - 12, BOARD_OFFSET_Y - 12, boardW, boardH, 20, activeTheme.boardBg, activeTheme.boardBorder, 5, activeTheme.uiShadow, 15);
+
+            // Grid Izgarası Çizimi
+            for(let r=0; r<GRID_SIZE; r++) {
+                for(let c=0; c<GRID_SIZE; c++) {
+                    const x = BOARD_OFFSET_X + c * (CELL_SIZE + CELL_GAP);
+                    const y = BOARD_OFFSET_Y + r * (CELL_SIZE + CELL_GAP);
+                    drawRoundRect(x, y, CELL_SIZE, CELL_SIZE, 8, activeTheme.cellBg);
+                }
+            }
+
+            // İpucu (Hint) Gösterimi
+            if(activeHint) {
+                const shape = pool[activeHint.poolIdx];
+                const colors = activeTheme.blocks[shape.colorId];
+                ctx.save();
+                ctx.globalAlpha = 0.4 + Math.sin(pulseTime * 2) * 0.15;
+                for(let r=0; r<shape.matrix.length; r++) {
+                    for(let c=0; c<shape.matrix[0].length; c++) {
+                        if(shape.matrix[r][c]) {
+                            const hX = BOARD_OFFSET_X + (activeHint.col + c) * (CELL_SIZE + CELL_GAP);
+                            const hY = BOARD_OFFSET_Y + (activeHint.row + r) * (CELL_SIZE + CELL_GAP);
+                            drawCellDesign(hX, hY, CELL_SIZE, colors, activeTheme.style);
                         }
                     }
                 }
                 ctx.restore();
             }
-            contains(mx, my) {
-                let w = (this.cols * CELL_SIZE + (this.cols - 1) * CELL_GAP) * this.scaleInPool;
-                let h = (this.rows * CELL_SIZE + (this.rows - 1) * CELL_GAP) * this.scaleInPool;
-                let x = poolSlots[this.slotIdx].x - w / 2; let y = poolSlots[this.slotIdx].y - h / 2;
-                return mx >= x - 25 && mx <= x + w + 25 && my >= y - 25 && my <= y + h + 25;
-            }
-        }
 
-        function init() {
-            try { highScore = parseInt(localStorage.getItem('jellyT_highScore')) || 0; } catch (e) {}
-            
-            const hasSave = loadGameState();
-            if(!hasSave) {
-                grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
-                score = 0;
-                scoreText.innerText = score;
-                fillPool();
-            }
-
-            currentLevel = -1; 
-            updateTheme(); 
-            activeHint = null;
-            comboStreak = 0; 
-            lastActionWasClear = false; 
-            isGameOver = false; 
-            particles = []; 
-            floatingTexts = [];
-            highScoreText.innerText = highScore; 
-            comboBadge.classList.remove('active'); 
-            gameOverOverlay.classList.remove('active');
-
-            if (!isLoopRunning) {
-                isLoopRunning = true;
-                requestAnimationFrame(gameLoop);
-            }
-        }
-
-        function fillPool() { 
-            pool = []; 
-            for(let i=0;i<3;i++) pool.push(new Shape(SHAPE_TEMPLATES[Math.floor(Math.random()*SHAPE_TEMPLATES.length)], i)); 
-            saveGameState();
-            checkGameOver(); 
-        }
-
-        function gameLoop() {
-            if (!isGameOver) {
-                pulseTime += 0.05; 
-                for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(); if (particles[i].alpha <= 0) particles.splice(i, 1); }
-                for (let i = floatingTexts.length - 1; i >= 0; i--) { floatingTexts[i].update(); if (floatingTexts[i].alpha <= 0) floatingTexts.splice(i, 1); }
-            }
-            render(); 
-            requestAnimationFrame(gameLoop);
-        }
-
-        function render() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let boardW = GRID_SIZE * CELL_SIZE + (GRID_SIZE - 1) * CELL_GAP + 20;
-            ctx.fillStyle = activeTheme.boardBg; ctx.beginPath(); ctx.roundRect(BOARD_OFFSET_X - 10, BOARD_OFFSET_Y - 10, boardW, boardW, 20); ctx.fill();
-            ctx.strokeStyle = activeTheme.boardBorder; ctx.lineWidth = 3; ctx.stroke();
-
-            let activeShape = (isDragging && dragIdx !== -1) ? pool[dragIdx] : null;
-            let gridTarget = activeShape ? getGridIndexUnderMouse(dragX, dragY, activeShape) : null;
-            let potentialClears = (gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) ? getPotentialClears(activeShape, gridTarget.row, gridTarget.col) : { rows: [], cols: [] };
-
-            for (let r = 0; r < GRID_SIZE; r++) {
-                for (let c = 0; c < GRID_SIZE; c++) {
-                    let x = BOARD_OFFSET_X + c * (CELL_SIZE + CELL_GAP); let y = BOARD_OFFSET_Y + r * (CELL_SIZE + CELL_GAP);
-                    ctx.fillStyle = activeTheme.cellBg; ctx.beginPath(); ctx.roundRect(x, y, CELL_SIZE, CELL_SIZE, 8); ctx.fill();
-                    if (grid[r][c] !== 0) {
-                        let colorType = activeShape && (potentialClears.rows.includes(r) || potentialClears.cols.includes(c)) ? activeShape.type : grid[r][c];
-                        drawJellyBlock(ctx, x, y, CELL_SIZE, activeTheme.blocks[colorType]);
+            // Yerleşmiş Blokların Çizimi
+            for(let r=0; r<GRID_SIZE; r++) {
+                for(let c=0; c<GRID_SIZE; c++) {
+                    if(grid[r][c] !== 0) {
+                        const x = BOARD_OFFSET_X + c * (CELL_SIZE + CELL_GAP);
+                        const y = BOARD_OFFSET_Y + r * (CELL_SIZE + CELL_GAP);
+                        const colors = activeTheme.blocks[grid[r][c]];
+                        if(colors) drawCellDesign(x, y, CELL_SIZE, colors, activeTheme.style);
                     }
                 }
             }
 
-            if (activeHint && !isDragging) {
-                let hShape = pool[activeHint.shapeIdx];
-                if (hShape) {
-                    for (let r = 0; r < hShape.rows; r++) {
-                        for (let c = 0; c < hShape.cols; c++) {
-                            if (hShape.matrix[r][c] === 1) {
-                                drawHintBlock(ctx, BOARD_OFFSET_X + (activeHint.col + c) * (CELL_SIZE + CELL_GAP), BOARD_OFFSET_Y + (activeHint.row + r) * (CELL_SIZE + CELL_GAP), CELL_SIZE);
+            // Alt Havuz (Pool) Paneli
+            drawRoundRect(15, 435, 410, 150, 24, activeTheme.poolBg, activeTheme.boardBorder, 4);
+
+            // Sürüklenen Parça Önizleme Matrisi
+            let dragRow = -1, dragCol = -1;
+            if(isDragging) {
+                const shape = pool[dragIdx];
+                const targetY = dragY - DRAG_OFFSET_Y;
+                const shapeWidth = shape.matrix[0].length * (CELL_SIZE + CELL_GAP);
+                const shapeHeight = shape.matrix.length * (CELL_SIZE + CELL_GAP);
+                const topLeftX = dragX - shapeWidth / 2;
+                const topLeftY = targetY - shapeHeight / 2;
+                dragCol = Math.round((topLeftX - BOARD_OFFSET_X) / (CELL_SIZE + CELL_GAP));
+                dragRow = Math.round((topLeftY - BOARD_OFFSET_Y) / (CELL_SIZE + CELL_GAP));
+                
+                if(canPlaceShape(shape.matrix, dragRow, dragCol)) {
+                    ctx.save(); ctx.globalAlpha = 0.35;
+                    const colors = activeTheme.blocks[shape.colorId];
+                    for(let r=0; r<shape.matrix.length; r++) {
+                        for(let c=0; c<shape.matrix[0].length; c++) {
+                            if(shape.matrix[r][c]) {
+                                const px = BOARD_OFFSET_X + (dragCol + c) * (CELL_SIZE + CELL_GAP);
+                                const py = BOARD_OFFSET_Y + (dragRow + r) * (CELL_SIZE + CELL_GAP);
+                                drawCellDesign(px, py, CELL_SIZE, colors, activeTheme.style);
                             }
                         }
                     }
+                    ctx.restore();
                 }
             }
 
-            if (activeShape && gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) {
-                for (let r = 0; r < activeShape.rows; r++) {
-                    for (let c = 0; c < activeShape.cols; c++) {
-                        if (activeShape.matrix[r][c] === 1) {
-                            ctx.save(); ctx.globalAlpha = 0.5; drawJellyBlock(ctx, BOARD_OFFSET_X + (gridTarget.col + c) * (CELL_SIZE + CELL_GAP), BOARD_OFFSET_Y + (gridTarget.row + r) * (CELL_SIZE + CELL_GAP), CELL_SIZE, activeTheme.blocks[activeShape.type]); ctx.restore();
+            // Havuzdaki Şekillerin Çizimi
+            for(let i=0; i<pool.length; i++) {
+                if(pool[i].placed) continue;
+                if(isDragging && dragIdx === i) continue;
+
+                const shape = pool[i];
+                const slot = poolSlots[i];
+                const scale = 0.58;
+                const size = CELL_SIZE * scale;
+                const gap = CELL_GAP * scale;
+                const colors = activeTheme.blocks[shape.colorId];
+
+                const sW = shape.matrix[0].length * size + (shape.matrix[0].length - 1) * gap;
+                const sH = shape.matrix.length * size + (shape.matrix.length - 1) * gap;
+                const startX = slot.x - sW / 2;
+                const startY = slot.y - sH / 2;
+
+                for(let r=0; r<shape.matrix.length; r++) {
+                    for(let c=0; c<shape.matrix[0].length; c++) {
+                        if(shape.matrix[r][c]) {
+                            const bx = startX + c * (size + gap);
+                            const by = startY + r * (size + gap);
+                            drawCellDesign(bx, by, size, colors, activeTheme.style);
                         }
                     }
                 }
             }
 
-            ctx.fillStyle = activeTheme.poolBg; ctx.beginPath(); ctx.roundRect(15, 440, canvas.width - 30, 140, 24); ctx.fill();
-            ctx.strokeStyle = activeTheme.boardBorder; ctx.lineWidth = 3; ctx.stroke();
-            pool.forEach((shape, idx) => { if (idx !== dragIdx) shape.draw(ctx); });
-            if (activeShape) pool[dragIdx].draw(ctx, dragX, dragY, true);
-            particles.forEach(p => p.draw(ctx)); floatingTexts.forEach(t => t.draw(ctx));
-        }
+            // Sürüklenen Şeklin Çizimi (Büyütülmüş Formda)
+            if(isDragging) {
+                const shape = pool[dragIdx];
+                const colors = activeTheme.blocks[shape.colorId];
+                const targetY = dragY - DRAG_OFFSET_Y;
+                const shapeWidth = shape.matrix[0].length * (CELL_SIZE + CELL_GAP) - CELL_GAP;
+                const shapeHeight = shape.matrix.length * (CELL_SIZE + CELL_GAP) - CELL_GAP;
+                const startX = dragX - shapeWidth / 2;
+                const startY = targetY - shapeHeight / 2;
 
-        function getPotentialClears(shape, targetRow, targetCol) {
-            let tempGrid = Array(GRID_SIZE).fill().map((_, r) => [...grid[r]]);
-            for (let r=0; r<shape.rows; r++) for (let c=0; c<shape.cols; c++) if (shape.matrix[r][c] === 1) tempGrid[targetRow+r][targetCol+c] = shape.type;
-            let rowsToClear = [], colsToClear = [];
-            for (let r=0; r<GRID_SIZE; r++) if (tempGrid[r].every(cell => cell !== 0)) rowsToClear.push(r);
-            for (let c=0; c<GRID_SIZE; c++) if (tempGrid.every(r => r[c] !== 0)) colsToClear.push(c);
-            return { rows: rowsToClear, cols: colsToClear };
-        }
-
-        function findBestMove() {
-            let bestScore = -1; let bestMove = null;
-            for (let i = 0; i < pool.length; i++) {
-                let shape = pool[i];
-                for (let r = 0; r <= GRID_SIZE - shape.rows; r++) {
-                    for (let c = 0; c <= GRID_SIZE - shape.cols; c++) {
-                        if (canPlace(shape.matrix, r, c)) {
-                            let moveScore = evaluateMove(shape, r, c);
-                            if (moveScore > bestScore) { bestScore = moveScore; bestMove = { shapeIdx: i, row: r, col: c }; }
+                for(let r=0; r<shape.matrix.length; r++) {
+                    for(let c=0; c<shape.matrix[0].length; c++) {
+                        if(shape.matrix[r][c]) {
+                            const bx = startX + c * (CELL_SIZE + CELL_GAP);
+                            const by = startY + r * (CELL_SIZE + CELL_GAP);
+                            drawCellDesign(bx, by, CELL_SIZE, colors, activeTheme.style);
                         }
                     }
                 }
             }
-            return bestMove;
-        }
 
-        function evaluateMove(shape, row, col) {
-            let score = 0;
-            let clears = getPotentialClears(shape, row, col);
-            score += (clears.rows.length + clears.cols.length) * 1000;
-            for (let r = 0; r < shape.rows; r++) {
-                for (let c = 0; c < shape.cols; c++) {
-                    if (shape.matrix[r][c] === 1) {
-                        let tr = row + r, tc = col + c;
-                        if (tr === 0 || tr === GRID_SIZE - 1) score += 5;
-                        if (tc === 0 || tc === GRID_SIZE - 1) score += 5;
-                        if (tr > 0 && grid[tr-1][tc] !== 0) score += 10;
-                        if (tr < GRID_SIZE - 1 && grid[tr+1][tc] !== 0) score += 10;
-                        if (tc > 0 && grid[tr][tc-1] !== 0) score += 10;
-                        if (tc < GRID_SIZE - 1 && grid[tr][tc+1] !== 0) score += 10;
-                    }
-                }
+            // Patlama Efekt Parçacıkları Çizimi
+            for(let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15; // hafif yerçekimi
+                p.life -= 0.025;
+                if(p.life <= 0) { particles.splice(i, 1); continue; }
+                ctx.save();
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             }
-            return score;
-        }
 
-        helpBtn.addEventListener('click', () => { if (!isGameOver && pool.length > 0) activeHint = findBestMove(); });
-
-        function getMousePos(e) {
-            let rect = canvas.getBoundingClientRect();
-            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
-        }
-
-        function startDragHandler(e) {
-            if (isGameOver) return;
-            activeHint = null; 
-            let pos = getMousePos(e);
-            for (let i = 0; i < pool.length; i++) {
-                if (pool[i].contains(pos.x, pos.y)) { isDragging = true; dragIdx = i; dragX = pos.x; dragY = pos.y - DRAG_OFFSET_Y; break; }
+            // Uçan Puan Metinleri Çizimi
+            for(let i = floatingTexts.length - 1; i >= 0; i--) {
+                const ft = floatingTexts[i];
+                ft.y -= 1.2;
+                ft.life -= 0.02;
+                if(ft.life <= 0) { floatingTexts.splice(i, 1); continue; }
+                ctx.save();
+                ctx.globalAlpha = ft.life;
+                ctx.fillStyle = ft.color;
+                ctx.font = `bold ${ft.size}px 'Fredoka', sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 4;
+                ctx.fillText(ft.text, ft.x, ft.y);
+                ctx.restore();
             }
         }
-        
-        function moveDragHandler(e) { if (isDragging && dragIdx !== -1 && !isGameOver) { let pos = getMousePos(e); dragX = pos.x; dragY = pos.y - DRAG_OFFSET_Y; } }
-        
-        function endDragHandler(e) {
-            if (!isDragging || dragIdx === -1 || isGameOver) return;
-            let activeShape = pool[dragIdx]; let gridTarget = getGridIndexUnderMouse(dragX, dragY, activeShape);
-            if (gridTarget && canPlace(activeShape.matrix, gridTarget.row, gridTarget.col)) {
-                placeShape(activeShape, gridTarget.row, gridTarget.col);
-                pool.splice(dragIdx, 1); pool.forEach((s, index) => s.slotIdx = index); checkLines(); 
-                if (pool.length === 0) fillPool(); else { saveGameState(); checkGameOver(); }
-            }
-            isDragging = false; dragIdx = -1;
+
+        function gameLoop() {
+            if(!isLoopRunning) return;
+            render();
+            requestAnimationFrame(gameLoop);
         }
 
-        function getGridIndexUnderMouse(mx, my, shape) {
-            let w = shape.cols * CELL_SIZE + (shape.cols - 1) * CELL_GAP; let h = shape.rows * CELL_SIZE + (shape.rows - 1) * CELL_GAP;
-            let col = Math.round((mx - w / 2 - BOARD_OFFSET_X) / (CELL_SIZE + CELL_GAP)); let row = Math.round((my - h / 2 - BOARD_OFFSET_Y) / (CELL_SIZE + CELL_GAP));
-            return (row >= 0 && row <= GRID_SIZE - shape.rows && col >= 0 && col <= GRID_SIZE - shape.cols) ? { row, col } : null;
-        }
-
-        function canPlace(matrix, row, col) {
-            for (let r=0; r<matrix.length; r++) for (let c=0; c<matrix[r].length; c++) if (matrix[r][c] === 1 && grid[row+r][col+c] !== 0) return false;
-            return true;
-        }
-
-        function checkGameOver() {
-            if (pool.length === 0) return;
-            let possible = false;
-            for (let shape of pool) {
-                for (let r = 0; r <= GRID_SIZE - shape.rows; r++) {
-                    for (let c = 0; c <= GRID_SIZE - shape.cols; c++) {
-                        if (canPlace(shape.matrix, r, c)) { possible = true; break; }
-                    }
-                    if(possible) break;
-                }
-                if(possible) break;
-            }
+        function initGame() {
+            grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
+            score = 0;
+            comboStreak = 0;
+            lastActionWasClear = false;
+            isGameOver = false;
+            currentLevel = 0;
+            activeTheme = THEMES[0];
+            activeHint = null;
+            particles = [];
+            floatingTexts = [];
+            scoreText.textContent = "0";
+            gameOverOverlay.classList.remove('active');
             
-            if(!possible) {
-                isGameOver = true;
-                localStorage.removeItem('jellyT_saveGame');
-                try { if (score > highScore) { highScore = score; localStorage.setItem('jellyT_highScore', highScore); highScoreText.innerText = highScore; } } catch (e) {}
-                document.getElementById('finalScore').innerText = score; document.getElementById('finalHighScore').innerText = highScore;
-                gameOverOverlay.classList.add('active');
+            loadHighScore();
+            updateThemeStyles();
+            refillPool();
+            
+            if(!isLoopRunning) {
+                isLoopRunning = true;
+                gameLoop();
             }
         }
-
-        function placeShape(shape, row, col) {
-            let blocksPlaced = 0;
-            for (let r=0; r<shape.rows; r++) for (let c=0; c<shape.cols; c++) if (shape.matrix[r][c] === 1) { grid[row+r][col+c] = shape.type; blocksPlaced++; }
-            score += blocksPlaced * 10; scoreText.innerText = score; updateTheme();
-            saveGameState();
-        }
-
-        function checkLines() {
-            let rowsToClear = [], colsToClear = [];
-            for (let r=0; r<GRID_SIZE; r++) if (grid[r].every(cell => cell !== 0)) rowsToClear.push(r);
-            for (let c=0; c<GRID_SIZE; c++) if (grid.every(r => r[c] !== 0)) colsToClear.push(c);
-            let totalCleared = rowsToClear.length + colsToClear.length;
-            if (totalCleared > 0) {
-                comboStreak = lastActionWasClear ? comboStreak + 1 : 1; lastActionWasClear = true;
-                if (comboStreak > 1) { comboBadge.innerText = `COMBO x${comboStreak} 🔥`; comboBadge.classList.add('active'); }
-                rowsToClear.forEach(r => { for (let c = 0; c < GRID_SIZE; c++) { if (grid[r][c] !== 0) { createExplosion(r, c, grid[r][c]); grid[r][c] = 0; } } });
-                colsToClear.forEach(c => { for (let r = 0; r < GRID_SIZE; r++) { if (grid[r][c] !== 0) { createExplosion(r, c, grid[r][c]); grid[r][c] = 0; } } });
-                let clearPoints = totalCleared * 100 * (comboStreak >= 2 ? comboStreak : 1); score += clearPoints; scoreText.innerText = score; updateTheme();
-                if (comboStreak >= 3) floatingTexts.push(new FloatingText("İNANILMAZ! 🚀", canvas.width / 2, canvas.height / 3, true));
-                else if (comboStreak === 2) floatingTexts.push(new FloatingText("HARİKA! Combo x2", canvas.width / 2, canvas.height / 3, false));
-                else floatingTexts.push(new FloatingText(`+${clearPoints}`, canvas.width / 2, canvas.height / 3, false));
-                saveGameState();
-            } else { lastActionWasClear = false; comboStreak = 0; comboBadge.classList.remove('active'); }
-        }
-
-        function createExplosion(row, col, type) {
-            for (let i = 0; i < 8; i++) particles.push(new Particle(BOARD_OFFSET_X + col * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2, BOARD_OFFSET_Y + row * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2, activeTheme.blocks[type]));
-        }
-
-        canvas.addEventListener('mousedown', startDragHandler); window.addEventListener('mousemove', moveDragHandler); window.addEventListener('mouseup', endDragHandler);
-        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDragHandler(e); }, { passive: false });
-        window.addEventListener('touchmove', (e) => { if(isDragging) e.preventDefault(); moveDragHandler(e); }, { passive: false });
-        window.addEventListener('touchend', endDragHandler);
-
-        restartBtn.addEventListener('click', () => {
-            localStorage.removeItem('jellyT_saveGame');
-            init();
-        });
-        
-        playBtn.addEventListener('click', () => { splashScreen.classList.add('hide'); init(); });
     </script>
 </body>
 </html>
